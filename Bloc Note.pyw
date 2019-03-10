@@ -27,17 +27,25 @@ def Bloc_Note(self):
 	self.Txt.grid(row=1,column=1, sticky='NS')
 	self.Lbx.grid(row=1,column=0, sticky='NS')
 	
+	def update_foldDic(path):
+		for element in os.listdir(path):
+			if "." not in element:
+				if element not in foldDic.keys():
+					foldDic[element] = path + "\\" + element
+					update_foldDic(foldDic[element])
+
 	#=============FILL LISTBOX============
 	for x in fold_list:
 		# Create in foldDic the root of folder path associated with the folder/file name
 		foldDic[x] = str(os.getcwd()) + "\\" + x
+		update_foldDic(foldDic[x])
 		# Display closed folder on listBox display
 		x = '▲ ' + x
 		# Print folder / file on listbox
 		self.Lbx.insert(0,x)
 		# Init List of folder
 
-	# Action when validating creating file/folder
+	# ==============Rreating file/folder================
 	def OptionMenuRead():
 		clear_info()
 		
@@ -119,19 +127,22 @@ def Bloc_Note(self):
 
 	# Save all bloc Note data
 	def backup():
+		
 		clear_info()
-		for folder in fold_list:
-			for file in os.listdir(folder):
-				file_path = os.path.join(os.getcwd(),folder,file)
-				with open(file_path, 'r') as infile:
-					text = infile.read()
-					backup_path = 'C:\\Users\\admin\\Prog\\BACKUP'+file
-					with open(backup_path, 'w+') as infile:
-						infile.write(text)
+		for folder, path in foldDic.items():
+			for element in os.listdir(path):
+				if '.' in element:
+					filePath = path + "\\" + element
+					with open(filePath, 'r') as infile:
+						text = infile.read()
+						backup_path = 'C:\\Users\\admin\\Prog\\BACKUP\\' + element
+						with open(backup_path, 'w+') as infile:
+							infile.write(text)
+
 		self.alert.config(text="Backup Done")
 		self.alert.grid(row=1,column=1, sticky="EWS")
 
-
+		
 	# Used for read in ListBox - Return only folder/file name
 	def filter(string):
 		badChars =['▲', '▼', ' ']
@@ -328,7 +339,6 @@ def Bloc_Note(self):
 		self.alert.grid_forget()
 
 	self.Lbx.bind("<<ListboxSelect>>", select_Lbx)
-	self.Lbx.bind("<Button-3>",)
 	self.Txt.bind("<Control-KeyPress-s>", save_text)
 
 

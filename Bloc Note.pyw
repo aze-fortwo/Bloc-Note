@@ -59,7 +59,7 @@ def Bloc_Note(self):
 		fileFormat = self.typeFileList.get()
 
 		if typeFileValue == 'File':
-			path = folder + "\\" + fileName + self.typeFileList.get()
+			path = foldDic[folder] + "\\" + fileName + self.typeFileList.get()
 			file = open(path,'w+',encoding='utf-8')
 			file.close()
 		
@@ -124,6 +124,45 @@ def Bloc_Note(self):
 				self.done_button.grid(row=1,column=7)
 
 		self.typeFileValue.trace('w', change_typeFileList)
+
+	def get_mouse_pos(event):
+		global pos_y
+		pos_y = event.y
+
+	def delete(file):
+		file = filter(file)
+		
+		if file in foldDic.keys():
+			deletePath = foldDic[file]
+			os.rmdir(deletePath)
+			self.Lbx.delete(self.Lbx.nearest(pos_y))
+			alertText = 'The folder '+ file + ' is deleted'
+		
+		else:
+			for folder, path in foldDic.items():
+				for element in os.listdir(path):
+					if element == file:
+						delPath = path + "\\" + file
+						os.remove(delPath)
+
+						alertText = "The file " + file + " is deleted"
+						self.Lbx.delete(self.Lbx.nearest(pos_y))
+
+		self.alert.config(text=alertText)
+		self.alert.grid(row=1,column=1, sticky="EWS")
+
+	pop_menu = tk.Menu(self,tearoff=0)
+	pop_menu.add_command(label = 'Add File', command=lambda:entry_fen())
+	pop_menu.add_command(label='Delete', command=lambda:delete(self.Lbx.get(self.Lbx.nearest(pos_y))))
+
+
+	def do_pop_menu(event):
+		
+		try:
+			pop_menu.tk_popup(event.x_root, event.y_root,0)
+		finally:
+			pop_menu.grab_release()
+
 
 	# Save all bloc Note data
 	def backup():
@@ -338,8 +377,12 @@ def Bloc_Note(self):
 	def clear_info():
 		self.alert.grid_forget()
 
+
+
 	self.Lbx.bind("<<ListboxSelect>>", select_Lbx)
 	self.Txt.bind("<Control-KeyPress-s>", save_text)
+	self.Lbx.bind("<Button-3>", do_pop_menu)
+	self.bind("<Motion>", get_mouse_pos)
 
 
 

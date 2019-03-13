@@ -1,5 +1,6 @@
 # Bloc-Note
-TXT file Explorer NOT FULLY FUNCTIONNAL
+TXT file Explorer 
+In progress
 
 Can do:
 - Create file.txt

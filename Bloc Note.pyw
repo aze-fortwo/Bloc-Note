@@ -2,307 +2,392 @@
 
 import tkinter as tk
 from tkinter import font
-from tkinter import TclError
-import io
 import os
-from tkinter import ttk
-from PIL import Image
+import time
+import io
 
-def createWidgets(self):
+def Bloc_Note(self):
+	global start, fold_list
 
-	File = list()# file
-	f = dict()	#file + folder
-	F = list()	#folder
+	start = 1
+	exept = ['bc.pyw','af.png','db.png','dlt.png','Menu.txt','test.pyw']
+	# List everything in the parent floder, except the not allowed file list
+	fold_list = [x for x in os.listdir('.') if x not in exept]
+	# foldDic contain all the files associated 
+	foldDic = {}
 
-	for folder in os.listdir("."):
-		if os.path.isdir(folder):
-			F.append(folder)
 
-	# Folder
-	for t in F:
-		if not os.path.exists(t):
-			os.makedirs(t)
-	i=0
+	self.Textfont = font.Font(family='Times New Roman', size=12, weight='normal', slant='roman')
+	self.Txt = tk.Text(self,width = 60, wrap=tk.WORD, font=self.Textfont)
+	self.Lbx = tk.Listbox(self, activestyle='none',selectforeground='white',highlightthickness=0,\
+			selectmode=tk.SINGLE, height=25,exportselection =0,selectbackground='light grey')
+	self.alert = tk.Message(self, text="", aspect=300, justify=tk.CENTER)
 
-	# File
-	while i < len(F):
-		for file in os.listdir(F[i]):
-			File.append(file)
-		i += 1
-	i=0
 
-	# Dico File + Folder
-	while i < len(F):
-		for file in os.listdir(F[i]):
-			f[file] = F[i]
-		i += 1	
+	self.Txt.grid(row=1,column=1, sticky='NS')
+	self.Lbx.grid(row=1,column=0, sticky='NS')
 	
-	i = 0
+	def update_foldDic(path):
+		for element in os.listdir(path):
+			if "." not in element:
+				if element not in foldDic.keys():
+					foldDic[element] = path + "\\" + element
+					update_foldDic(foldDic[element])
 
-	Textfont = font.Font(family='Times New Roman', size=12, weight='normal', slant='roman')
+	#=============FILL LISTBOX============
+	for x in fold_list:
+		# Create in foldDic the root of folder path associated with the folder/file name
+		foldDic[x] = str(os.getcwd()) + "\\" + x
+		update_foldDic(foldDic[x])
+		# Display closed folder on listBox display
+		x = '▲ ' + x
+		# Print folder / file on listbox
+		self.Lbx.insert(0,x)
+		# Init List of folder
 
-	self.txt = tk.Text(fen, width = 60, wrap=tk.WORD, font=Textfont)
-	self.Lbx=tk.Listbox(fen, activestyle='none',selectforeground='white',highlightthickness=0,\
-				selectmode=tk.SINGLE, height=30,exportselection =0,selectbackground='light grey')
-	self.E = tk.Entry(self, width = 12)
-	self.alert = tk.Message(self, aspect=300, justify=tk.RIGHT)
+	# ==============Rreating file/folder================
+	def OptionMenuRead():
+		clear_info()
+		
+		# Type of creation request  (folder or file)
+		typeFileValue = self.typeFileValue.get()
+		# In wich folder you want it blank for nothing
+		folder = self.foldListValue.get()
+		# What is the folder or the file name
+		fileName = self.entry.get()
+		#What is the format of the file
+		fileFormat = self.typeFileList.get()
 
-	# Insertion des dossiers dans la listbox
-	while i < len(F):
-		self.Lbx.insert(tk.END,F[i])
-		self.Lbx.itemconfig(tk.END, foreground="blue")
-		i += 1
-	# Grid Zone
-	self.E.grid(row=0,column=0,sticky=tk.N+tk.W)
-	self.Lbx.grid(row=1, column=0, columnspan = 4, sticky=tk.N+tk.S+tk.W+tk.E)
-	self.txt.grid(row=0, column=4,columnspan=3, rowspan=2,sticky=tk.N+tk.S)
+		if typeFileValue == 'File':
+			path = foldDic[folder] + "\\" + fileName + self.typeFileList.get()
+			file = open(path,'w+',encoding='utf-8')
+			file.close()
+		
+		if typeFileValue == 'Folder':
+			if folder != '':
+				path = folder+'\\'+ fileName
+			else:
+				path = fileName
+			os.mkdir(path)
+		
+		self.entry_window.destroy()
 
+		txt = "Create " + fileName + "In " + folder
+		self.alert.config(text=txt)
+		self.alert.grid(row=1,column=1, sticky="EWS")
+
+	# Create folder/File zone
+	def entry_fen():
+		# < New <FILE/FOLDER> in <FOLDER LIST> named <NAME ENTRY> as <TYPE OF FILE>
+
+		# New window for creation files
+		self.entry_window = tk.Toplevel()
+		
+		# Type of creation: FILE or FOLDER
+		self.typeFileValue = tk.StringVar()
+		self.typeFileValue.set('File')
+		self.typeList = tk.OptionMenu(self.entry_window,self.typeFileValue,'File','Folder')
+		
+		# In wich folder do you want to make it ?
+		self.foldListValue = tk.StringVar()
+		self.foldListValue.set(fold_list[0])
+		self.foldList = tk.OptionMenu(self.entry_window,self.foldListValue,*foldDic.keys(),'')
+
+		# Name of the file
+		self.entry = tk.Entry(self.entry_window, width=10)
+
+		# Submit button
+		self.done_button = tk.Button(self.entry_window, text='✔', command=OptionMenuRead)
+
+		# Type of file if (file creation only)
+		allowed_types = ['.txt', '.py', '.pyw','.html','.css','.js']
+		self.typeFileList = tk.StringVar()
+		self.typeFileList.set(allowed_types[0])
+		self.typeOfFile = tk.OptionMenu(self.entry_window,self.typeFileList, *allowed_types)
+		
+		tk.Label(self.entry_window, text='New ').grid(row=1,column=0, sticky='NSW')
+		self.typeList.grid(row=1,column=1,sticky='NSW')
+		tk.Label(self.entry_window, text=' in ').grid(row=1,column=2,sticky='NSW')
+		self.foldList.grid(row=1,column=3,sticky='NSW')
+		tk.Label(self.entry_window,text='named :').grid(row=1,column=4,sticky='NSW')
+		self.entry.grid(row=1,column=5, sticky='NSW')
+		self.typeOfFile.grid(row=1,column=6)
+		self.done_button.grid(row=1,column=7)
+		
+		def change_typeFileList(*args):
+			if self.typeFileValue.get() == 'Folder':
+				self.typeOfFile.grid_remove()
+				self.done_button.grid(row=1,column=6)
 	
-	def __init__(self, master=None):
-		Tk.Frame.__init__(self, master)
-		self.grid(sticky=N+S+E+W)
-		self.createWidgets()
+			elif self.typeFileValue.get() == 'File':
+				self.typeOfFile.grid(row=1,column=6)
+				self.done_button.grid(row=1,column=7)
+
+		self.typeFileValue.trace('w', change_typeFileList)
+
+	def get_mouse_pos(event):
+		global pos_y
+		pos_y = event.y
+
+	def delete(file):
+		file = filter(file)
+		
+		if file in foldDic.keys():
+			deletePath = foldDic[file]
+			os.rmdir(deletePath)
+			self.Lbx.delete(self.Lbx.nearest(pos_y))
+			alertText = 'The folder '+ file + ' is deleted'
+		
+		else:
+			for folder, path in foldDic.items():
+				for element in os.listdir(path):
+					if element == file:
+						delPath = path + "\\" + file
+						os.remove(delPath)
+
+						alertText = "The file " + file + " is deleted"
+						self.Lbx.delete(self.Lbx.nearest(pos_y))
+
+		self.alert.config(text=alertText)
+		self.alert.grid(row=1,column=1, sticky="EWS")
+
+	pop_menu = tk.Menu(self,tearoff=0)
+	pop_menu.add_command(label = 'Add File', command=lambda:entry_fen())
+	pop_menu.add_command(label='Delete', command=lambda:delete(self.Lbx.get(self.Lbx.nearest(pos_y))))
+
+
+	def do_pop_menu(event):
+		
+		try:
+			pop_menu.tk_popup(event.x_root, event.y_root,0)
+		finally:
+			pop_menu.grab_release()
+
+
+	# Save all bloc Note data
+	def backup():
+		
+		clear_info()
+		for folder, path in foldDic.items():
+			for element in os.listdir(path):
+				if '.' in element:
+					filePath = path + "\\" + element
+					with open(filePath, 'r') as infile:
+						text = infile.read()
+						backup_path = 'C:\\Users\\admin\\Prog\\BACKUP\\' + element
+						with open(backup_path, 'w+') as infile:
+							infile.write(text)
+
+		self.alert.config(text="Backup Done")
+		self.alert.grid(row=1,column=1, sticky="EWS")
+
+		
+	# Used for read in ListBox - Return only folder/file name
+	def filter(string):
+		badChars =['▲', '▼', ' ']
+		
+		# Every character in bad list
+		for char in badChars:
+			# While any bad character in ListBox string
+			# Reset parsing every time because of 
+			# decreasing len(string)
+
+			while char in string:
+				i = 0
+				# Go into each char of Listbox string
+				while i < len(string):
+					# If we found it
+					if string[i] == char:
+						if i != 0:
+							# Cut from 0 to bad index then from bad index +1 to end
+							string = string[:i] + string[i+1:]
+							# break make while i < len(string) restart
+							break
+						if i == 0:
+							# Cut from 0+1 to the end of string
+							string = string[i+1:]
+							# break make while i < len(string) restart
+							break
+					i += 1
+		return string
+
+	menubar = tk.Menu(self)
+	filemenu = tk.Menu(menubar, tearoff=0)
+	filemenu.add_command(label='New...', command=entry_fen)
+	filemenu.add_separator()
+	filemenu.add_command(label='Backup', command=backup)
+	menubar.add_cascade(label='File',menu=filemenu)
+	self.config(menu=menubar)
+
+	def select_Lbx(event):
+		global fileSelected
+
+		clear_info()
+		# Where do we have clicked ? ListBox index
+		currentSelection = self.Lbx.curselection()
+		# What is displayed at this index ?
+		selected = self.Lbx.get(currentSelection)
+		# Get file/folder name whithout undesired char
+		fileSelected = filter(selected)
+		# Our new line for ListBox
+		text = ""
+		
+
+		def close_fold(foldPath):
+			# Get from the selected listBox element to the end
+			# of the listBox element
+			LbxContent = self.Lbx.get(currentSelection,last=tk.END)
+			
+			# For every content in clicked folder
+			for file in os.listdir(foldPath):
+				# List all the displayed files on listBox
+				for i, name in enumerate(LbxContent):
+					# If the displayed files match the content folder
+					if filter(name) == filter(file):
+						
+
+						# If foldPath content is a Folder Dictionnary key
+						if file in foldDic.keys() :
+							# Recall function for searching file in it
+							close_fold(foldDic[file])
+
+							# Delete from the ListBox the parsed folder
+							newElementPos = currentSelection[0] + 1
+
+						# If foldPath content is a file
+						else:
+							newElementPos = currentSelection[0] + i 
+						
+						self.Lbx.delete(newElementPos)
+					
+
+
+		# If closed folder selected -> show content
+		if '▲' in selected:
+				
+			foldSave = fileSelected
+			# Spacing for folder content
+			# basicLen is the size of path from 
+			# executable root to the file we clicked on
+			basicLen = len(os.getcwd().split('\\'))+1
+			# pathLen is the size of the path of the clicked folder/file
+			pathLen = len(foldDic[fileSelected].split('\\'))
+			# 1 path folder size of difference = 1 tabulation
+			i = 0
+			while pathLen - i > basicLen :
+				text += '    '
+				i += 1
+
+			# Replace close arrow by open arrow
+			# on selected folder
+			text += '▼ ' + filter(selected)
+			# Delete old clicked folder
+			self.Lbx.delete(currentSelection)
+			# Update displayed folder
+			self.Lbx.insert(currentSelection,text)
+				
+			# For every content of the folder		
+			for element in os.listdir(foldDic[fileSelected]):
+				# Reset text value for coming folder/file name
+				text = '' 
+				i = 0
+				# Re-tabulate file/folder display name
+				while 1 + pathLen - i > basicLen :
+					text += '    '
+					i += 1
+
+				# Set the new position in listBox
+				# One below the last content
+				newElementPos = currentSelection[0] + 1 
+				# If it's not a file
+				if '.' not in element:
+					# Add it to the folder dictionnary
+					foldDic[element] = foldDic[fileSelected] + '\\' + element
+					# Check if it's a folder
+					if os.path.isdir(foldDic[element]):
+						# Add the folder closed symbol
+						text +=	'▲ ' + element
+					# If it's a file
+				else:
+					# Add just the file name
+					text += element
+					#Put it into listBox
+				
+				self.Lbx.insert(newElementPos,text)
+
+
+
+		# If open folder selected -> hide content
+		elif '▼' in selected:
+				
+			# Spacing for folder content
+			# basicLen is the size of path from 
+			# executable root to the file we clicked on
+			basicLen = len(os.getcwd().split('\\'))+1
+			# pathLen is the size of the path of the clicked folder/file
+			pathLen = len(foldDic[fileSelected].split('\\'))
+			# 1 path folder size of difference = 1 tabulation
+			i = 0
+				
+			while pathLen - i > basicLen :
+				text += '    '
+				i += 1
+				
+			text += '▲ ' + filter(selected)
+			self.Lbx.delete(currentSelection)
+			self.Lbx.insert(currentSelection,text)
+
+			close_fold(foldDic[fileSelected])
+
+
+		# If file is selected -> display on text widget
+		else:
+			# For every known elements
+			for element, value in foldDic.items():
+				# Get content of those elements
+				content = [x for x in os.listdir(foldDic[element])]
+				# In content
+				for file in content:
+				# If we found the file we clicked on
+					if fileSelected == file:
+						# Open it 
+						with open(foldDic[element] + "\\" + fileSelected,"r",encoding="utf-8") as ofi:
+							text = ofi.read()
+							self.Txt.delete(0.0,index2=tk.END)
+							self.Txt.insert("insert",text)
+
+	def save_text(event):
+		global fileSelected
+		clear_info()
+		
+		for element in foldDic.keys():
+			content = [x for x in os.listdir(foldDic[element])]
+			for file in content:
+				if fileSelected == file and self.Txt.get(0.0, index2=tk.END) != "":
+					saved = self.Txt.get(0.0, index2=tk.END)
+					break
+
+		with open(foldDic[element]+"\\"+fileSelected,"w+", encoding="utf-8") as ofi:
+			ofi.write(saved)
+
+		txt = fileSelected + " Saved"
+		self.alert.config(text=txt)
+		self.alert.grid(row=1,column=1, sticky="EWS")
 
 	def clear_info():
 		self.alert.grid_forget()
 
-	# Récupère l'indice de Lbx
-	def wich_file(event):
-		pos = self.Lbx.curselection()
-		pose = int(pos[0])
-		file = self.Lbx.get(pose)
-		pose += 1
 
-		# Si c'est un fichier .txt
-		if file.find('.txt') != -1:
-			for item, key in f.items(): # On cherche dans le dictionnaire
-				if item == file:
-					fold = key 	# On obtient le folder
-					self.E.delete(0, last= tk.END) # Clear l'entry
-					self.E.insert(0, file) 	# Afiche le fichier sélectionné
-					open_file(folder=fold, file = file)	
-		# Sinon
-		else:
-			next_file = self.Lbx.get(pose)	# Ligne suivant
-			if next_file.find('.txt') == -1:	# Si la ligne suivante n'est pas un .txt
-				for fichier in os.listdir(file):	# On cherche les fichier dedans
-					self.Lbx.insert(pose, fichier)# On les insert sous le fold dans Lbx
-					self.Lbx.itemconfig(pose, foreground='orange')
-					pose += 1 # On passe à la ligne suivante
-			
-			# Si la ligne suivante est un fichier
-			elif next_file.find('.txt') != -1:
-				for fichier in os.listdir(file):	# On cherche les fichier dedans
-					self.Lbx.delete(pose)# On les insert sous le fold dans Lbx
 
-			
-			fold = file
-			file += '.txt'
-			self.E.delete(0, last= tk.END)
-			self.E.insert(0, file)
-			open_file(folder=fold, file = file)
-
-	# Ouvre et affiche le texte en rapport à Lbx
-	def open_file(folder,file):
-		clear_info()
-		if file.find('.txt') != -1:
-			fichier = folder+'\\'+str(file)
-			ofi = io.open(fichier,encoding='utf-8',mode = 'r')
-			text = ofi.read()
-			self.txt.delete(0.0, index2= tk.END)
-			self.txt.insert('insert',text)
-			ofi.close()
-		else:
-			fichier = folder+'\\'+folder+'.txt'
-			ofi = open(fichier,'r')
-			text = ofi.read()
-			self.txt.delete(0.0, index2= tk.END)
-			self.txt.insert('insert',text)
-			ofi.close()
-
-	# Sauvegarde le text dans le fichier approprié
-	def save_text(event):
-		clear_info()
-		pos = self.Lbx.curselection()
-		try:
-			pose = int(pos[0])
-		except IndexError:
-			pass
-		fichier = self.Lbx.get(pose)	# Sélection Lbx
-		
-		# Si un fichier est sélectionné
-		if fichier.find('.txt') != -1:
-			for item, key in f.items():		# Recherche du dossier parent
-				if item == fichier:
-					fold = key 				# On récupère le dossier
-
-			text = self.txt.get(0.0, index2=tk.END) # On récupère le texte
-			fichier = fold+'\\'+str(fichier)		# Path
-			ofi = io.open(fichier,encoding="utf-8", mode = "w+") # Ouverture fichier
-			ofi.write(text)	# Modification
-			ofi.close()
-
-		# Si un dossier est sélectionné
-		else :
-			text = self.txt.get(0.0, index2=tk.END) # On récupère le texte
-			fold = fichier 	# Le dossier à le même nom que le fichier
-			fichierr = fold+'\\'+fichier+'.txt' # Path
-			ofi = io.open(fichierr,encoding="utf-8", mode = "w+") # Ouverture fichier
-			ofi.write(text) # Sauvegarde
-			ofi.close()
-
-		alertMsg = 'Sauvé'
-		self.alert.config(text=alertMsg)
-		self.alert.grid(row=1,column=6,sticky=tk.E+tk.N)
-
-	# Créer un fichier.txt dans le dossier approprié
-	def new_note():
-		clear_info()
-		if self.E.get() == '0/':		# Jamais marché ^^
-			self.E.config(text='insert filename')
-		else:
-			fil = self.Lbx.curselection()
-			pose = int(fil[0])
-			LbxSelect = self.Lbx.get(pose) # Sélection Lbx
-
-			# Si un fichier est sélectionné
-			if LbxSelect.find('.txt') != -1:
-				for item, key in f.items():	# Recherche du dossier parent
-					if item == LbxSelect:
-						fold = key 			# On récupère le dossier
-						print(fold)
-			else:
-				fold = str(LbxSelect)
-
-			Notename = self.E.get()			# Nom du nouveau fichier
-			if Notename.find('.txt') == -1:	# Si le nom n'est pas en '.txt'
-				Notename += '.txt'			# Ajoute le '.txt'
-		
-			self.E.delete(0, last=tk.END)	# Nettoie l'entrée
-
-			path = fold +'\\'+ Notename		#Path
-			ofi = io.open(path,encoding="utf-8",mode='w+') # Création du nouveau fichier
-			pose += 1
-			ofi.close()
-
-			self.Lbx.insert(pose,Notename)	# Insertion du fichier dans la liste
-			self.Lbx.itemconfig(pose, foreground='orange')
-			open_file(folder = fold,file = Notename) #Lecture et affichage du fichier
-		
-			f[Notename] = fold				# Ajoute le fichier et le folder au dictionnaire
-			File.append(Notename)			# Ajoute le fichier à la liste des fichiers
-
-		alertMsg = 'NewNote'
-		self.alert.config(text=alertMsg)
-		self.alert.grid(row=1,column=6,sticky=tk.E+tk.N)
-
-	# Supprime le dossier ou fichier sélectionne dans la Lbx
-	def del_note():
-		clear_info()
-		file = self.E.get()		# Récupère l'entrée
-
-		# Si l'entrée est un fichier
-		if file.find('.txt') != -1:
-			for item, key in f.items(): # On cherche son doffier parent
-				if item == file:
-					fold = key 			# On l'enregistre
-		
-		self.E.delete(0, last= tk.END) 	# Clear l'entrée
-		path = fold+'\\'+file
-		os.remove(path)					# SUppression du fichier
-		pos = self.Lbx.curselection()	# Récupération de l'indice Lbx
-		self.Lbx.delete(pos)			# Suppression de l'indice
-
-		alertMsg = 'Supprimé'
-		self.alert.config(text=alertMsg)
-		self.alert.grid(row=1,column=6,sticky=tk.E+tk.N)
-
-	# Créer un folder à la fin de la liste
-	def add_folder():
-		clear_info()
-		path = self.E.get() # Récupère le nom du dossier
-
-		# Si il n'existe pas de dossier du même nom
-		if not os.path.exists(path): 
-			os.makedirs(path)	# On en créer un
-		
-		self.Lbx.insert(tk.END, path)	# Ajoute le dossier en fin de Lbx
-		self.Lbx.itemconfig(tk.END, foreground='blue') # Colore le dossier en bleu
-		Notename = path+'.txt'
-		chem = path+'\\'+Notename
-		ofi = io.open(chem, encoding='utf-8', mode='w+') # Créer un subfolder du même nom
-		ofi.close()
-
-		f[path] = Notename # Ajoute le dossier au dico
-
-		alertMsg = 'NewDoc'
-		self.alert.config(text=alertMsg)
-		self.alert.grid(row=2,column=7,sticky=tk.E+tk.N)
+	self.Lbx.bind("<<ListboxSelect>>", select_Lbx)
+	self.Txt.bind("<Control-KeyPress-s>", save_text)
+	self.Lbx.bind("<Button-3>", do_pop_menu)
+	self.bind("<Motion>", get_mouse_pos)
 
 
 
-	# Binding List
-	self.Lbx.bind("<<ListboxSelect>>", wich_file)
-	self.txt.bind("<Control-KeyPress-s>", save_text)
-
-	self.Fold_button_img = tk.PhotoImage(file='af.png')
-	self.Addfold = tk.Button(self, image = self.Fold_button_img,command = add_folder, width="15", height="15")
-	self.Addfold.grid(row=0, column=1, sticky=tk.N+tk.E)
-
-	self.Note_Button_img = tk.PhotoImage(file='db.png')
-	self.Nb = tk.Button(self, command = new_note, image = self.Note_Button_img, width="15", height="15")
-	self.Nb.grid(row=0, column=2, sticky=tk.N+tk.E)
-
-	self.Del_Note_img = tk.PhotoImage(file='dlt.png')
-	self.Dlt = tk.Button(self, image = self.Del_Note_img,command = del_note, width="15", height="15")
-	self.Dlt.grid(row=0, column=3, sticky=tk.N+tk.E)
-'''
-	# Text Modification
-	def set_bold():
-		self.txt.tag_add('Bold', tk.SEL_FIRST, tk.SEL_LAST)
-		self.txt.tag_config('Bold', font=('Times New Roman',12,'bold'))
-
-	def set_italic():
-		self.txt.tag_add('Italic', tk.SEL_FIRST, tk.SEL_LAST)
-		self.txt.tag_config('Italic', font=('Times New Roman',12,'normal','italic'))
-
-	def set_underline():
-		self.txt.tag_add('Underline', tk.SEL_FIRST, tk.SEL_LAST)
-		self.txt.tag_config('Underline', font=('Times New Roman',12,'normal','roman','underline'))
-
-	def set_default():
-		self.txt.tag_add('Default', tk.SEL_FIRST, tk.SEL_LAST)
-		self.txt.tag_config('Default', font=('Times New Roman',12,'normal','roman'))
-	
-	self.bold_Button_img = tk.PhotoImage(file='G.png')
-	self.bold_Button = tk.Button(self, image = self.bold_Button_img, command=set_bold, width="15", height="15")
-	self.bold_Button.grid(row=0, column=4,padx=20, sticky=tk.W+tk.N+tk.S)
-
-	self.italic_Button_img = tk.PhotoImage(file='I.png')
-	self.italic_Button = tk.Button(self, image = self.italic_Button_img, command=set_italic, width="15", height="15")
-	self.italic_Button.grid(row=0, column=4,padx=40, sticky=tk.W+tk.N+tk.S)	
-
-	self.underline_Button_img = tk.PhotoImage(file='U.png')
-	self.underline_Button = tk.Button(self, image = self.underline_Button_img, command=set_underline, width="15", height="15")
-	self.underline_Button.grid(row=0, column=4,padx=60, sticky=tk.W+tk.N+tk.S)	
-
-	self.default_Button_img = tk.PhotoImage(file='D.png')
-	self.default_Button = tk.Button(self, image = self.default_Button_img, command=set_default, width="15", height="15")
-	self.default_Button.grid(row=0, column=4,padx=80, sticky=tk.W+tk.N+tk.S)		
-'''	
 if __name__ == "__main__":
-
-	fen = tk.Tk()
-	fen.title('Bloc Note')
-	fen.resizable(False, False)
-
-	x = fen.winfo_pointerx()
-	y = fen.winfo_pointery()
-
-	createWidgets(fen)
-	
-
-
-
-
-	fen.mainloop()
+	self = tk.Tk()
+	self.title('Bloc Note 2.0')
+	Bloc_Note(self)
+	self.mainloop()

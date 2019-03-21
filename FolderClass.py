@@ -71,7 +71,7 @@ class Folder:
 		try:
 			self.contentList = os.listdir(self.path)
 		except:
-			print('Update contentList FAILED')
+			print('Update contentList FAILED.\n')
 
 
 	def get_contentList_path(self):
@@ -84,5 +84,5 @@ class Folder:
 				contentList_path.append(newPath)
 			return contentList_path
 		except:
-			print('Get contentList path FAILED')
+			print('Get contentList path FAILED.\n')
 

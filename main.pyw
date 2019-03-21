@@ -17,15 +17,14 @@ def is_in_folderList(folderName):
 	for folder in folderList:
 		try:
 			if folder.name == folderName:
-				print('Yes.')
 				return True
 				break
 
 		except:
-			print('No.')
 			return False
 
-def get_folder_in_folderList(folderName):
+
+def get_folderObject_in_folderList(folderName):
 	print('[MAIN] Get folder "{}" from folderList.'.format(folderName))
 
 	for folder in folderList:
@@ -47,11 +46,9 @@ def is_open_in_Listbox(folder):
 			contentList_len -= 1
 			try:
 				if contentList_len == 0:
-					print('Yes.')
 					return True
 					break
 			except:
-				print('No.')
 				return False
 
 
@@ -73,7 +70,7 @@ def Listbox_click(event):
 	content_clicked = Listbox.get(Listbox.curselection())
 
 	if is_in_folderList(content_clicked):
-		folder_clicked = get_folder_in_folderList(content_clicked)
+		folder_clicked = get_folderObject_in_folderList(content_clicked)
 		
 		if is_open_in_Listbox(folder_clicked):
 			Listbox_delete_contentList(folder_clicked.contentList)

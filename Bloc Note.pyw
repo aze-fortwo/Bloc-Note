@@ -6,11 +6,13 @@ import os
 import time
 import io
 
+
+
 def Bloc_Note(self):
 	global start, fold_list
 
 	start = 1
-	exept = ['bc.pyw','af.png','db.png','dlt.png','Menu.txt','test.pyw']
+	exept = ['.gitignore','README.md','Bloc Note.pyw','Listbox.pyw']
 	# List everything in the parent floder, except the not allowed file list
 	fold_list = [x for x in os.listdir('.') if x not in exept]
 	# foldDic contain all the files associated 
@@ -389,5 +391,5 @@ def Bloc_Note(self):
 if __name__ == "__main__":
 	self = tk.Tk()
 	self.title('Bloc Note 2.0')
-	Bloc_Note(self)
+	#Bloc_Note(self)
 	self.mainloop()

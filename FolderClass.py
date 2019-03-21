@@ -6,7 +6,7 @@ class Folder:
 
 	def __init__(self, name):
 		self._path = os.getcwd() + "\\" + name
-		self._contentList = ()
+		self._contentList = []
 		self.name = name
 		
 		Folder.total_folder += 1
@@ -17,7 +17,7 @@ class Folder:
 
 	def __repr__(self):
 		folderLen = len(self.contentList)
-		return '\n\nDEFINING FOLDER \nThe folder "{}" located in "{}" have "{}" file(s) in it.\n'\
+		return '\n\nDEFINING FOLDER "{}" \nLocated in "{}" have {} file(s) inside.\n'\
 			.format(self.name, self.path, folderLen)
 
 
@@ -61,7 +61,9 @@ class Folder:
 	path = property(_get_path, _set_path)
 	contentList = property(_get_contentList, _set_contentList)
 	
+
 	"""-------------------- Folder Method ----------------------"""
+
 
 	def update_contentList(self):
 		print('[FOLD] Update contentList "{}".'.format(self.contentList))

@@ -12,32 +12,61 @@ unwated_Files = ['.git','.gitignore','BlocNote.pyw','FolderClass.py','README.md'
 """----------------Open/close folder/file------------------"""
 
 def is_in_folderList(folderName):
-	print('[MAIN] Is {} folder ?'.format(folderName))
+	print('[MAIN] Is "{}" in folderList ?'.format(folderName))
 	
 	for folder in folderList:
-		if folder.name == folderName:
-			return True
-		else:
-			return False
+		try:
+			if folder.name == folderName:
+				print('Yes.')
+				return True
+				break
 
+		except:
+			print('No.')
+			return False
 
 def get_folder_in_folderList(folderName):
 	print('[MAIN] Get folder "{}" from folderList.'.format(folderName))
 
 	for folder in folderList:
-		if folder.name == folderName:
-			return folder
-		else:
+		try:
+			if folder.name == folderName:
+				return folder
+		except:
 			return None
 
 
-def is_open(folder):
-	print('[MAIN] Is {} open in listbox ?'.format(folder.name))
+def is_open_in_Listbox(folder):
+	print('[MAIN] Is "{}" open in listbox ?'.format(folder.name))
+	
 
-	if folder.contentList in Listbox.get(0, last=tk.END):
-		return True
-	else:
-		return False
+	contentList_len = len(folder.contentList)
+
+	for content in folder.contentList:
+		if content in Listbox.get(0,last=tk.END):
+			contentList_len -= 1
+			try:
+				if contentList_len == 0:
+					print('Yes.')
+					return True
+					break
+			except:
+				print('No.')
+				return False
+
+
+def Listbox_insert_contentList(contentList):
+	print('Add "{}" to listbox.'.format(contentList))
+	
+	for content in contentList:
+		Listbox.insert(Listbox.curselection()[0]+1, content)
+
+
+def Listbox_delete_contentList( contentList):
+	print('Delete "{}" from listbox.'.format(contentList))
+
+	for content in contentList:
+		Listbox.delete(Listbox.curselection()[0]+1)
 
 
 def Listbox_click(event):
@@ -45,11 +74,11 @@ def Listbox_click(event):
 
 	if is_in_folderList(content_clicked):
 		folder_clicked = get_folder_in_folderList(content_clicked)
-		if is_open(folder_clicked):
-			print('OK')
+		
+		if is_open_in_Listbox(folder_clicked):
+			Listbox_delete_contentList(folder_clicked.contentList)
 		else:
-
-			Listbox.insert(Listbox.curselection()[0]+1, folder_clicked.contentList)
+			Listbox_insert_contentList(folder_clicked.contentList)
 			
 
 """--------------------Tkinter----------------------------"""
@@ -76,7 +105,6 @@ for content in os.listdir('.'):
 	if content not in unwated_Files:
 		if os.path.isdir(content):
 			folderList.append(Folder(content))
-			Listbox.insert(tk.END,Folder(content).name)
-
+			Listbox.insert(tk.END,content)
 
 app.mainloop()

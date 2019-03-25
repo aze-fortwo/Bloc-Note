@@ -52,6 +52,15 @@ class Folder:
 			print('Get contentList path FAILED.\n')
 
 
+	def get_folder_in_foldList(searched_folderName):
+		print('[FOLD] Is "{}" in foldList ?'.format(searched_folderName))
+
+		try :
+			for folder in Folder.foldList:
+				if folder.name == searched_folderName:
+					return folder
+		except:
+			print('Get {} from foldList FAILED'.format(searched_folderName))
 
 	"""-------------------- Folder Attribute property ----------------------"""
 

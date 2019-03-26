@@ -17,12 +17,15 @@ class Folder:
 		self.update_contentList()
 		self.update_foldList()
 
-
+	def __repr__(self):
+			folderLen = len(self.contentList)
+			return '\n\nDEFINING FOLDER "{}" \nLocated in "{}" have {} file(s) inside.\n'\
+				.format(self.name, self.path, folderLen)
 
 	"""-------------------- Folder Method ----------------------"""
 
 	def update_contentList(self):
-		print('[FOLD] Update contentList "{}".'.format(self.contentList))
+		print('[FOLD] Update contentList of "{}".'.format(self.name))
 
 		try:
 			self.contentList = os.listdir(self.path)
@@ -31,7 +34,7 @@ class Folder:
 
 
 	def update_foldList(self):
-		print('[FOLD] Update foldList from contentList {}'.format(self.contentList))
+		print('[FOLD] Update foldList with "{}" content'.format(self.name))
 
 		for contentPath in self.get_contentList_path():
 			if os.path.isdir(contentPath):
@@ -39,7 +42,7 @@ class Folder:
 
 
 	def get_contentList_path(self):
-		print('[FOLD] Get path of contentList "{}" of "{}".'.format(self.contentList, self.name))
+		print('[FOLD] Get path of contentList of "{}".'.format(self.name))
 
 		contentList_path = []
 		try:
@@ -51,35 +54,44 @@ class Folder:
 		except:
 			print('Get contentList path FAILED.\n')
 
+	
+	def get_parent_folder(self):
+		print('[FOLD] Get parent folder of "{}"'.format(self.name))
 
+		try:
+			return os.path.split(self.path)[-2]
+		except:
+			print('Get parent folder of "{}"" FAILED.\n'.format(self.name))
+
+
+	"""--------------------Folder Instance method -----------------------"""
+	
 	def get_folder_in_foldList(searched_folderName):
-		print('[FOLD] Is "{}" in foldList ?'.format(searched_folderName))
+		print('[FOLD] Get "{}" FolderObject from foldList'.format(searched_folderName))
 
 		try :
 			for folder in Folder.foldList:
 				if folder.name == searched_folderName:
 					return folder
 		except:
-			print('Get {} from foldList FAILED'.format(searched_folderName))
+			print('Get "{}"" from foldList FAILED.\n'.format(searched_folderName))
+
 
 	"""-------------------- Folder Attribute property ----------------------"""
 
-	def __repr__(self):
-		folderLen = len(self.contentList)
-		return '\n\nDEFINING FOLDER "{}" \nLocated in "{}" have {} file(s) inside.\n'\
-			.format(self.name, self.path, folderLen)
+	
 
 
-	def _get_path(self):
-		print('[FOLD] Get Path of "{}".'.format(self.name))
+	def _get_Folder_path(self):
+		#print('[FOLD] Get Path of "{}".'.format(self.name))
 
 		try:
 			return self._path
 		except:
 			print('Get path FAILED.\n')
 
-	def _set_path(self, newPath):
-		print('[FOLD] Set Path "{}" to "{}".'.format(self.path, newPath))
+	def _set_Folder_path(self, newPath):
+		#print('[FOLD] Set Path of "{}".'.format(self.name))
 
 		try:
 			self._path = newPath
@@ -87,16 +99,16 @@ class Folder:
 			print('Set newPath  FAILED.\n')
 
 
-	def _get_contentList(self):
-		print('[FOLD] Get contentList of "{}".'.format(self.name))
+	def _get_Folder_contentList(self):
+		#print('[FOLD] Get contentList of "{}".'.format(self.name))
 
 		try:
 			return self._contentList
 		except:
 			print('Get contentList FAILED.\n')
 
-	def _set_contentList(self, newContentList):
-		print('[FOLD] Set contentList from "{}" to "{}".'.format(self.contentList, newContentList))
+	def _set_Folder_contentList(self, newContentList):
+		#print('[FOLD] Set contentList of "{}".'.format(self.name))
 
 		try :
 			self._contentList = newContentList
@@ -107,8 +119,8 @@ class Folder:
 
 
 
-	path = property(_get_path, _set_path)
-	contentList = property(_get_contentList, _set_contentList)
+	path = property(_get_Folder_path, _set_Folder_path)
+	contentList = property(_get_Folder_contentList, _set_Folder_contentList)
 	
 
 

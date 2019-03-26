@@ -1,5 +1,6 @@
 #coding:utf-8
 import os
+from FileClass import File
 
 class Folder:
 	total_folder = 0
@@ -13,44 +14,44 @@ class Folder:
 		
 		Folder.total_folder += 1
 		Folder.foldList.append(self)
-
+		print('[FOLD CREATION]', self)
 		self.update_contentList()
-		self.update_foldList()
 
 	def __repr__(self):
 			folderLen = len(self.contentList)
 			return '\n\nDEFINING FOLDER "{}" \nLocated in "{}" have {} file(s) inside.\n'\
 				.format(self.name, self.path, folderLen)
 
-	"""-------------------- Folder Method ----------------------"""
+	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
 		print('[FOLD] Update contentList of "{}".'.format(self.name))
 
-		try:
-			self.contentList = os.listdir(self.path)
-		except:
-			print('Update contentList FAILED.\n')
+		for content in os.listdir(self.path):
+			try:
+				newPath = os.path.join(self.path, content)
+				if os.path.isdir(newPath):
+					self.contentList.append( Folder(os.path.join(self.path, content)))
+
+				elif os.path.isfile(newPath):
+					self.contentList.append(File(os.path.join(self.path, content)))
+			except:
+				print('Update contentList FAILED.\n')
 
 
 	def update_foldList(self):
 		print('[FOLD] Update foldList with "{}" content'.format(self.name))
 
-		for contentPath in self.get_contentList_path():
+		for contentPath in self.get_contentList():
 			if os.path.isdir(contentPath):
 				Folder(contentPath)
 
 
-	def get_contentList_path(self):
-		print('[FOLD] Get path of contentList of "{}".'.format(self.name))
+	def get_contentList(self):
+		print('[FOLD] Get path of contentList from "{}".'.format(self.name))
 
-		contentList_path = []
 		try:
-			for content in self.contentList:
-				newPath = self.path + '\\' + content
-				contentList_path.append(newPath)
-
-			return contentList_path
+			return self.contentList
 		except:
 			print('Get contentList path FAILED.\n')
 
@@ -62,9 +63,7 @@ class Folder:
 			return os.path.split(self.path)[-2]
 		except:
 			print('Get parent folder of "{}"" FAILED.\n'.format(self.name))
-
-
-	"""--------------------Folder Instance method -----------------------"""
+	
 	
 	def get_folder_in_foldList(searched_folderName):
 		print('[FOLD] Get "{}" FolderObject from foldList'.format(searched_folderName))

@@ -5,7 +5,6 @@ import os
 class File:
 	
 	total_file = 0
-	fileList = []
 
 	
 
@@ -15,15 +14,25 @@ class File:
 		self.name = os.path.split(path)[-1]
 
 		File.total_file += 1
-		File.fileList.append(self)
-
+		print('[FILE CREATION]', self)
 		self.update_content()
 
 	def __repr__(self):
 		return '\n\nDEFINING FILE "{}"" \nLocated in "{}" with content:\n"{}"'\
 				.format(self.name, self.path, self.content)
 
-	"""-------------------- Folder Attribute property ----------------------"""
+	"""-------------------- File instance method -------------------------"""
+
+	def update_content(self):
+		print('[FILE] Update content of "{}".'.format(self.name))
+		try:
+			with open(self.path, "r") as ofi:
+				self.content = ofi.read()
+		except:
+			print('Update content FAILED.\n')
+
+
+	"""-------------------- File Attribute property ----------------------"""
 
 	def _get_File_path(self):
 		#print('[FILE] Get Path of "{}".'.format(self.name))
@@ -61,13 +70,7 @@ class File:
 
 
 
-	def update_content(self):
-		print('[FILE] Update content of "{}".'.format(self.name))
-		try:
-			with open(self.path, "r") as ofi:
-				self.content = ofi.read()
-		except:
-			print('Update content FAILED.\n')
+	
 
 
 

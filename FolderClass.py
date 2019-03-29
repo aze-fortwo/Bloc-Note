@@ -14,7 +14,6 @@ class Folder:
 		
 		Folder.total_folder += 1
 		Folder.foldList.append(self)
-		print('[FOLD CREATION]', self)
 		self.update_contentList()
 
 	def __repr__(self):
@@ -25,13 +24,13 @@ class Folder:
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
-		print('[FOLD] Update contentList of "{}".'.format(self.name))
+		print('\nFOLD "{}" Update contentList.'.format(self.name))
 
 		for content in os.listdir(self.path):
 			try:
 				newPath = os.path.join(self.path, content)
 				if os.path.isdir(newPath):
-					self.contentList.append( Folder(os.path.join(self.path, content)))
+					self.contentList.append(Folder(os.path.join(self.path, content)))
 
 				elif os.path.isfile(newPath):
 					self.contentList.append(File(os.path.join(self.path, content)))
@@ -40,7 +39,7 @@ class Folder:
 
 
 	def update_foldList(self):
-		print('[FOLD] Update foldList with "{}" content'.format(self.name))
+		print('\nFOLD Update foldList with "{}" content'.format(self.name))
 
 		for contentPath in self.get_contentList():
 			if os.path.isdir(contentPath):
@@ -48,7 +47,7 @@ class Folder:
 
 
 	def get_contentList(self):
-		print('[FOLD] Get path of contentList from "{}".'.format(self.name))
+		print('\nFOLD Get path of contentList from "{}".'.format(self.name))
 
 		try:
 			return self.contentList
@@ -56,24 +55,39 @@ class Folder:
 			print('Get contentList path FAILED.\n')
 
 	
-	def get_parent_folder(self):
-		print('[FOLD] Get parent folder of "{}"'.format(self.name))
+	def get_parent_folder_path(self):
+		print('\nFOLD Get parent folder of "{}"'.format(self.name))
 
 		try:
-			return os.path.split(self.path)[-2]
+			return os.path.split(self.path)[0]
 		except:
 			print('Get parent folder of "{}"" FAILED.\n'.format(self.name))
 	
-	
+
+	def is_in_foldList(searched_folderName):
+		print('\n\tFOLD Search FolderObject "{}"  in foldList'.format(searched_folderName))
+		try:
+
+
+			for folder in Folder.foldList:
+				if folder.name == searched_folderName:
+					print("\tIs in foldList")
+					return True
+
+		except:
+			print("Search in foldList FAILED.\n")
+
+
+
 	def get_folder_in_foldList(searched_folderName):
-		print('[FOLD] Get "{}" FolderObject from foldList'.format(searched_folderName))
+		print('\n\tFOLD "{}" Get FolderObject from foldList'.format(searched_folderName))
 
 		try :
 			for folder in Folder.foldList:
 				if folder.name == searched_folderName:
 					return folder
 		except:
-			print('Get "{}"" from foldList FAILED.\n'.format(searched_folderName))
+			print('Get "{}" from foldList FAILED.\n'.format(searched_folderName))
 
 
 	"""-------------------- Folder Attribute property ----------------------"""
@@ -82,7 +96,7 @@ class Folder:
 
 
 	def _get_Folder_path(self):
-		#print('[FOLD] Get Path of "{}".'.format(self.name))
+		#print('FOLD Get Path of "{}".'.format(self.name))
 
 		try:
 			return self._path
@@ -90,7 +104,7 @@ class Folder:
 			print('Get path FAILED.\n')
 
 	def _set_Folder_path(self, newPath):
-		#print('[FOLD] Set Path of "{}".'.format(self.name))
+		#print('FOLD Set Path of "{}".'.format(self.name))
 
 		try:
 			self._path = newPath
@@ -99,7 +113,7 @@ class Folder:
 
 
 	def _get_Folder_contentList(self):
-		#print('[FOLD] Get contentList of "{}".'.format(self.name))
+		#print('FOLD Get contentList of "{}".'.format(self.name))
 
 		try:
 			return self._contentList
@@ -107,7 +121,7 @@ class Folder:
 			print('Get contentList FAILED.\n')
 
 	def _set_Folder_contentList(self, newContentList):
-		#print('[FOLD] Set contentList of "{}".'.format(self.name))
+		#print('FOLD Set contentList of "{}".'.format(self.name))
 
 		try :
 			self._contentList = newContentList

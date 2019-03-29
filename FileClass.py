@@ -14,7 +14,6 @@ class File:
 		self.name = os.path.split(path)[-1]
 
 		File.total_file += 1
-		print('[FILE CREATION]', self)
 		self.update_content()
 
 	def __repr__(self):
@@ -24,18 +23,18 @@ class File:
 	"""-------------------- File instance method -------------------------"""
 
 	def update_content(self):
-		print('[FILE] Update content of "{}".'.format(self.name))
+		print('\t FILE "{}" Update content.'.format(self.name))
 		try:
 			with open(self.path, "r") as ofi:
 				self.content = ofi.read()
 		except:
 			print('Update content FAILED.\n')
 
-
+	
 	"""-------------------- File Attribute property ----------------------"""
 
 	def _get_File_path(self):
-		#print('[FILE] Get Path of "{}".'.format(self.name))
+		#print('FILE Get Path of "{}".'.format(self.name))
 
 		try:
 			return self._path
@@ -43,7 +42,7 @@ class File:
 			print('Get path FAILED.\n')
 
 	def _set_File_path(self, newPath):
-		#print('[FILE] Set Path of "{}".'.format(self.name))
+		#print('FILE Set Path of "{}".'.format(self.name))
 
 		try:
 			self._path = newPath
@@ -53,7 +52,7 @@ class File:
 
 
 	def _get_File_content(self):
-		#print('[FILE] Get content of "{}".'.format(self.name))
+		#print('FILE Get content of "{}".'.format(self.name))
 
 		try:
 			return self._content
@@ -61,7 +60,7 @@ class File:
 			print('Get content FAILED.\n')
 
 	def _set_File_content(self, newContent):
-		#print('[FILE] Set content of "{}".'.format(self.name))
+		#print('FILE Set content of "{}".'.format(self.name))
 
 		try :
 			self._content = newContent

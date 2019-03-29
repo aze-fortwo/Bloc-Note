@@ -2,6 +2,7 @@
 
 import os
 from FolderClass import Folder
+from FileClass import File
 import tk_init as tki
 
 
@@ -9,13 +10,13 @@ import tk_init as tki
 
 unwanted_Files = [	'tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
-					'tk_init.py']
+					'tk_init.py', 		'FileClass.py']
 
 for content in os.listdir('.'):
 	if content not in unwanted_Files:
 		path = os.getcwd() + "\\" + content
 		folder = Folder(path)
-		tki.Listbox.insert(0, folder.name)
+		tki.Listbox.insert(tki.tk.END, folder.name)
 
 
 """--------------------Tkinter----------------------------"""

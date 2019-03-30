@@ -10,11 +10,14 @@ class Folder:
 	def __init__(self, path):
 		self._path = path
 		self._contentList = []
-		self.name = os.path.split(path)[-1]
+		self.name = os.path.split(path)[1]
+		self.lbx_name = self.name
 		
 		Folder.total_folder += 1
 		Folder.foldList.append(self)
+
 		self.update_contentList()
+		
 
 	def __repr__(self):
 			folderLen = len(self.contentList)
@@ -24,70 +27,81 @@ class Folder:
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
-		print('\nFOLD "{}" Update contentList.'.format(self.name))
+		#print('\nFOLD "{}" Update contentList.'.format(self.name))
 
-		for content in os.listdir(self.path):
-			try:
+		try:
+			for content in os.listdir(self.path):
 				newPath = os.path.join(self.path, content)
+
 				if os.path.isdir(newPath):
-					self.contentList.append(Folder(os.path.join(self.path, content)))
+					newFold = Folder(os.path.join(self.path, content))
+					newFold.lbx_name = "   " + newFold.lbx_name
+					self.contentList.append(newFold)
 
 				elif os.path.isfile(newPath):
-					self.contentList.append(File(os.path.join(self.path, content)))
-			except:
-				print('Update contentList FAILED.\n')
+					newFile = File(os.path.join(self.path, content))
+					newFile.lbx_name = "   " + newFile.lbx_name
+					self.contentList.append(newFile)
 
 
-	def update_foldList(self):
-		print('\nFOLD Update foldList with "{}" content'.format(self.name))
-
-		for contentPath in self.get_contentList():
-			if os.path.isdir(contentPath):
-				Folder(contentPath)
+		except Exception as exception:
+			print(exception)
+			print('\nUpdate contentList FAILED.\n'.format(type(exception).__name__))
 
 
-	def get_contentList(self):
-		print('\nFOLD Get path of contentList from "{}".'.format(self.name))
+	def update_lbx_name(self):
+		#print('\nFOLD Format "{}" for listbox name.'.format(self.name))
 
 		try:
-			return self.contentList
-		except:
-			print('Get contentList path FAILED.\n')
+			parent_folder = self.get_parent_folder()
+			
+			if Folder.is_in_foldList(parent_folder):
+				self.lbx_name = "   " + self.lbx_name
+				
+				# File.lbx_name update
+				for content in self.contentList:
+					content.lbx_name = "   " + content.lbx_name
+					
+		except Exception as exception:
+			print(exception)
+			print('\nFormat "{}" FAILED'.format(self.name))
 
-	
-	def get_parent_folder_path(self):
-		print('\nFOLD Get parent folder of "{}"'.format(self.name))
+
+	def get_parent_folder(self):
+		#print('\nFOLD Get parent folder of "{}"'.format(self.name))
 
 		try:
-			return os.path.split(self.path)[0]
-		except:
-			print('Get parent folder of "{}"" FAILED.\n'.format(self.name))
-	
+			return os.path.split(os.path.split(self.path)[0])[1]
+
+		except Exception as exception:
+			print(exception)
+			print('\nGet parent folder of "{}"" FAILED.\n'.format(self.name))
+
 
 	def is_in_foldList(searched_folderName):
-		print('\n\tFOLD Search FolderObject "{}"  in foldList'.format(searched_folderName))
+		#print('\nFOLD Is "{}"  in foldList ?'.format(searched_folderName))
 		try:
-
-
 			for folder in Folder.foldList:
-				if folder.name == searched_folderName:
-					print("\tIs in foldList")
+				if folder.lbx_name == searched_folderName:
+					#print("     It is in foldList")
 					return True
 
-		except:
-			print("Search in foldList FAILED.\n")
-
+		except Exception as exception:
+			print(exception)
+			print("\nSearch in foldList FAILED.\n")
 
 
 	def get_folder_in_foldList(searched_folderName):
-		print('\n\tFOLD "{}" Get FolderObject from foldList'.format(searched_folderName))
+		#print('\nFOLD "{}" Get FolderObject from foldList'.format(searched_folderName))
 
 		try :
 			for folder in Folder.foldList:
-				if folder.name == searched_folderName:
+				if folder.lbx_name == searched_folderName:
 					return folder
-		except:
-			print('Get "{}" from foldList FAILED.\n'.format(searched_folderName))
+		except Exception as exception:
+			print(exception)
+			print('\nGet "{}" from foldList FAILED.\n'.format(type(exception).__name__, searched_folderName))
+
 
 
 	"""-------------------- Folder Attribute property ----------------------"""

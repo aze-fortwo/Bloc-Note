@@ -12,6 +12,7 @@ class File:
 		self._path = path
 		self._content = ""
 		self.name = os.path.split(path)[-1]
+		self.lbx_name = self.name
 
 		File.total_file += 1
 		self.update_content()
@@ -23,49 +24,50 @@ class File:
 	"""-------------------- File instance method -------------------------"""
 
 	def update_content(self):
-		print('\t FILE "{}" Update content.'.format(self.name))
+		#print('     FILE "{}" Update content.'.format(self.name))
 		try:
 			with open(self.path, "r") as ofi:
 				self.content = ofi.read()
-		except:
-			print('Update content FAILED.\n')
 
-	
+		except Exception as exception:
+			print('\t{}\n\tUpdate content FAILED.\n'.format(type(exception).__name__))
+
+
 	"""-------------------- File Attribute property ----------------------"""
 
 	def _get_File_path(self):
-		#print('FILE Get Path of "{}".'.format(self.name))
+		#print('\tFILE Get Path of "{}".'.format(self.name))
 
 		try:
 			return self._path
 		except:
-			print('Get path FAILED.\n')
+			print('\t     Get path FAILED.\n')
 
 	def _set_File_path(self, newPath):
-		#print('FILE Set Path of "{}".'.format(self.name))
+		#print('\tFILE Set Path of "{}".'.format(self.name))
 
 		try:
 			self._path = newPath
 		except:
-			print('Set newPath  FAILED.\n')
+			print('\t     Set newPath  FAILED.\n')
 
 
 
 	def _get_File_content(self):
-		#print('FILE Get content of "{}".'.format(self.name))
+		#print('\tFILE Get content of "{}".'.format(self.name))
 
 		try:
 			return self._content
 		except:
-			print('Get content FAILED.\n')
+			print('\t     Get content FAILED.\n')
 
 	def _set_File_content(self, newContent):
-		#print('FILE Set content of "{}".'.format(self.name))
+		#print('\tFILE Set content of "{}".'.format(self.name))
 
 		try :
 			self._content = newContent
 		except:
-			print('Set content FAILED.\n')
+			print('\t     Set content FAILED.\n')
 
 
 

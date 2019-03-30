@@ -14,10 +14,20 @@ unwanted_Files = [	'tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 
 for content in os.listdir('.'):
 	if content not in unwanted_Files:
-		path = os.getcwd() + "\\" + content
-		folder = Folder(path)
-		tki.Listbox.insert(tki.tk.END, folder.name)
+		path = os.path.join(os.getcwd(), content)
+		if os.path.isdir(path):
+			discovered = Folder(path)
+		else:
+			discovered = File(path)
+		
+		tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
 
+
+"""
+for content in Folder.foldList:
+	for subcontent in content.contentList:
+		print(subcontent.lbx_name)
+"""
 
 """--------------------Tkinter----------------------------"""
 

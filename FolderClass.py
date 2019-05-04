@@ -1,33 +1,37 @@
 #coding:utf-8
 import os
 from FileClass import File
+import logging
+
+logging.basicConfig(filename='debug.txt', filemode='w+', level = logging.DEBUG,format=' %(asctime)s - %(levelname)s - FOLDER - %(message)s')
 
 class Folder:
 	total_folder = 0
 	foldList = []
 
 
-	def __init__(self, path):
-		self._path = path
+	def __init__(self, dirEntry):
+		self._path = dirEntry.path
 		self._contentList = []
-		self.name = os.path.split(path)[1]
+		self.dirEntry = dirEntry
+		self.name = dirEntry.name
 		self.lbx_name = self.name
 		
 		Folder.total_folder += 1
 		Folder.foldList.append(self)
 
+		logging.info('Create <%s>'%self)
 		self.update_contentList()
 		
 
 	def __repr__(self):
 			folderLen = len(self.contentList)
-			return '\n\nDEFINING FOLDER "{}" \nLocated in "{}" have {} file(s) inside.\n'\
-				.format(self.name, self.path, folderLen)
+			return '"{}" with {} file(s) inside.'.format(self.path, folderLen)
 
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
-		#print('\nFOLD "{}" Update contentList.'.format(self.name))
+		logging.info('<{}> Update contentList.'.format(self.name))
 
 		try:
 			for content in os.listdir(self.path):
@@ -45,12 +49,11 @@ class Folder:
 
 
 		except Exception as exception:
-			print(exception)
-			print('\nUpdate contentList FAILED.\n'.format(type(exception).__name__))
+			logging.error('Update contentList FAILED.\n'.format(type(exception).__name__))
 
 
 	def update_lbx_name(self):
-		#print('\nFOLD Format "{}" for listbox name.'.format(self.name))
+		logging.info('Format "{}" for listbox name.'.format(self.name))
 
 		try:
 			parent_folder = self.get_parent_folder()
@@ -63,23 +66,21 @@ class Folder:
 					content.lbx_name = "   " + content.lbx_name
 					
 		except Exception as exception:
-			print(exception)
-			print('\nFormat "{}" FAILED'.format(self.name))
+			logging.error('Format "{}" FAILED'.format(self.name))
 
 
 	def get_parent_folder(self):
-		#print('\nFOLD Get parent folder of "{}"'.format(self.name))
+		logging.info('Get parent folder of "{}"'.format(self.name))
 
 		try:
 			return os.path.split(os.path.split(self.path)[0])[1]
 
 		except Exception as exception:
-			print(exception)
-			print('\nGet parent folder of "{}"" FAILED.\n'.format(self.name))
+			logging.error('Get parent folder of "{}"" FAILED.\n'.format(self.name))
 
 
 	def is_in_foldList(searched_folderName):
-		#print('\nFOLD Is "{}"  in foldList ?'.format(searched_folderName))
+		logging.info('Is "{}"  in foldList ?'.format(searched_folderName))
 		try:
 			for folder in Folder.foldList:
 				if folder.lbx_name == searched_folderName:
@@ -87,20 +88,18 @@ class Folder:
 					return True
 
 		except Exception as exception:
-			print(exception)
-			print("\nSearch in foldList FAILED.\n")
+			logging.error("Search in foldList FAILED.\n")
 
 
 	def get_folder_in_foldList(searched_folderName):
-		#print('\nFOLD "{}" Get FolderObject from foldList'.format(searched_folderName))
+		logging.info('<{}> Get FolderObject from foldList'.format(searched_folderName))
 
 		try :
 			for folder in Folder.foldList:
 				if folder.lbx_name == searched_folderName:
 					return folder
 		except Exception as exception:
-			print(exception)
-			print('\nGet "{}" from foldList FAILED.\n'.format(type(exception).__name__, searched_folderName))
+			logging.error('Get "{}" from foldList FAILED.\n'.format(type(exception).__name__, searched_folderName))
 
 
 
@@ -110,37 +109,29 @@ class Folder:
 
 
 	def _get_Folder_path(self):
-		#print('FOLD Get Path of "{}".'.format(self.name))
-
 		try:
 			return self._path
 		except:
-			print('Get path FAILED.\n')
+			logging.error('Get path FAILED.\n')
 
 	def _set_Folder_path(self, newPath):
-		#print('FOLD Set Path of "{}".'.format(self.name))
-
 		try:
 			self._path = newPath
 		except:
-			print('Set newPath  FAILED.\n')
+			logging.error('Set newPath  FAILED.\n')
 
 
 	def _get_Folder_contentList(self):
-		#print('FOLD Get contentList of "{}".'.format(self.name))
-
 		try:
 			return self._contentList
 		except:
-			print('Get contentList FAILED.\n')
+			logging.error('Get contentList FAILED.\n')
 
 	def _set_Folder_contentList(self, newContentList):
-		#print('FOLD Set contentList of "{}".'.format(self.name))
-
 		try :
 			self._contentList = newContentList
 		except:
-			print('Set contentList FAILED.\n')
+			logging.error('Set contentList FAILED.\n')
 
 
 

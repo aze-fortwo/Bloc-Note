@@ -2,7 +2,7 @@
 
 import os
 import logging
-logging.basicConfig(filename='debug.txt',filemode='w+', level = logging.DEBUG,format=' %(asctime)s - %(levelname)s - FILE - %(message)s')
+
 
 
 class File:
@@ -27,13 +27,13 @@ class File:
 	"""-------------------- File instance method -------------------------"""
 
 	def update_content(self):
-		logging.info('"{}" Update content.'.format(self.name))
+		logging.info('FILE - "{}" Update content.'.format(self.name))
 		try:
 			with open(self.path, "r") as ofi:
 				self.content = ofi.read()
 
 		except Exception as exception:
-			logging.error('{} Update content FAILED.\n'.format(type(exception).__name__))
+			logging.error('FILE - {} Update content FAILED.\n'.format(type(exception).__name__))
 
 
 	"""-------------------- File Attribute property ----------------------"""
@@ -42,14 +42,14 @@ class File:
 		try:
 			return self._path
 		except:
-			logging.error('Get path FAILED.')
+			logging.error('FILE - Get path FAILED.')
 
 	def _set_File_path(self, newPath):
 
 		try:
 			self._path = newPath
 		except:
-			logging.error('Set newPath  FAILED.')
+			logging.error('FILE - Set newPath  FAILED.')
 
 
 
@@ -57,13 +57,13 @@ class File:
 		try:
 			return self._content
 		except:
-			logging.error('Get content FAILED.')
+			logging.error('FILE - Get content FAILED.')
 
 	def _set_File_content(self, newContent):
 		try :
 			self._content = newContent
 		except:
-			logging.error('Set content FAILED.')
+			logging.error('FILE - Set content FAILED.')
 
 	
 

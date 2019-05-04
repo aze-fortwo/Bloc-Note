@@ -1,25 +1,26 @@
 #coding: utf-8
 
 import os
-from FolderClass import Folder
-from FileClass import File
+import FolderClass 
+import FileClass
 import tk_init as tki
 import logging
 
-logging.basicConfig(filename='debug.txt',filemode='w+', level = logging.DEBUG,format='MAIN %(message)s')
-
+logging.basicConfig(level = logging.DEBUG,\
+		format=' %(asctime)s - %(levelname)s - %(message)s',datefmt='%H:%M:%S')
 """----------Init Current Working Directory folder-----------"""
 
 unwanted_Files = [	'tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
 					'tk_init.py', 		'FileClass.py',	'Debug.txt']
 
-for content in os.scandir('.'):
+logging.debug('FIRST SCANNING LOOP')
+for content in os.scandir(os.getcwd()):
 	if content.name not in unwanted_Files:
 		if content.is_dir():
-			discovered = Folder(content)
-		else:
-			discovered = File(content)
+			discovered = FolderClass.Folder(content)
+		if content.is_file():
+			discovered = FileClass.File(content)
 		
 		tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
 

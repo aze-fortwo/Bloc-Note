@@ -49,23 +49,23 @@ def is_open_in_Listbox(folder):
 
 
 def Listbox_delete_contentList(contentList, lbx_line):
-	logging.info("LBX - Listbox_delete_contentList({},{})".format(contentList, lbx_line))
+	logging.info("LBX - DEL - Listbox_delete_contentList({})".format(contentList))
 	try:
 		for content in contentList:
 			if content.dirEntry.is_dir():
 				if is_open_in_Listbox(content):
-					Listbox_delete_contentList(content.contentList,lbx_line[0]+1)
+					Listbox_delete_contentList(content.contentList,(lbx_line[0]+1,))
 			tki.Listbox.delete(lbx_line[0]+1)
-			logging.info('LBX - Delete "{}" from listbox.'.format(content.name))
+			logging.info('LBX - DEL - "{}" from listbox.'.format(content.name))
 
 	except Exception as exception:
-		logging.error("LBX - Listbox_delete_contentList({},{}) FAILED:\n<{}>".\
-				format(contentList, lbx_line, exception))
+		logging.error("LBX - DEL - Listbox_delete_contentList({}) FAILED:\n<{}>".\
+				format(contentList, exception))
 
 
 
 def Listbox_insert_contentList(contentList, lbx_line):
-	logging.info("LBX - Add {} item(s) to listbox :".format(len(contentList)))
+	logging.info("LBX - ADD - {} item(s) to listbox :".format(len(contentList)))
 	
 	try:
 		for content in contentList:
@@ -73,7 +73,7 @@ def Listbox_insert_contentList(contentList, lbx_line):
 			tki.Listbox.insert(lbx_line[0]+1, content.lbx_name)
 
 	except Exception as exception:
-		logging.error("LBX - Add {} items from listbox FAILED:\n<{}>".\
+		logging.error("LBX - ADD - {} items from listbox FAILED:\n<{}>".\
 				format(len(contentList),type(exception).__name__))
 
 

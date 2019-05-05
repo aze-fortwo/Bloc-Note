@@ -24,8 +24,7 @@ class File:
 		self.update_content()
 
 	def __repr__(self):
-		return '\n\nDEFINING FILE "{}"" \nLocated in "{}" with content:\n"{}"'\
-				.format(self.name, self.path, self.content)
+		return 'FILE "{}"'.format(self.name, self.path)
 
 	"""-------------------- File instance method -------------------------"""
 

@@ -18,10 +18,16 @@ for content in os.scandir(os.getcwd()):
 	if content.name not in unwanted_Files:
 		if content.is_dir():
 			discovered = FolderClass.Folder(content)
+			tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
+			tki.Listbox.itemconfig(tki.tk.END, foreground='blue')
+
+
 		if content.is_file():
 			discovered = FileClass.File(content)
+			tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
+			tki.Listbox.itemconfig(tki.tk.END, foreground='orange')
 		
-		tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
+
 
 """
 for content in Folder.foldList:

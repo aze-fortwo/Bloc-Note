@@ -39,15 +39,16 @@ class Folder:
 				if content.is_dir():
 					newFold = Folder(content)
 					self.contentList.append(newFold)
+					Folder.foldList.append(newFold)
 					logging.info('FOLD - Add <{}> to {} contentList'.\
 							format(newFold.name, self.name))
 
 				elif content.is_file():
 					newFile = File(content)
 					self.contentList.append(newFile)
+					Folder.foldList.append(newFile)
 					logging.info('FOLD - Add <{}> to {} contentList'.\
 							format(newFile.name, self.name))
-
 		except Exception as exception:
 			logging.error('FOLD - update_contentList({}) FAILED.'.format(type(exception).__name__))
 
@@ -65,8 +66,12 @@ class Folder:
 					parentFolder = Folder.get_folder_in_foldList(os.path.split(\
 											os.path.dirname(parentFolder.path))[-1])
 				self.lbx_name += self.name
+				logging.info('FOLD - lbx_name -> %s'%(self.lbx_name))
+
 			else:
 				self.lbx_name = self.name
+				logging.info('FOLD - lbx_name -> %s'%(self.lbx_name))
+
 					
 		except Exception as exception:
 			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
@@ -96,6 +101,7 @@ class Folder:
 				if folder.lbx_name == searched_folderName or folder.name == searched_folderName:
 					logging.info("FOLD - YES")
 					return True
+
 			logging.info("FOLD - NO")
 			return False
 

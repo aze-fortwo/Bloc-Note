@@ -31,14 +31,14 @@ class File:
 	def update_content(self):
 		logging.info('FILE - "{}" Update content.'.format(self.name))
 		try:
-			with open(self.path, "r") as ofi:
+			with open(self.path, "r", encoding='utf-8') as ofi:
 				self.content = ofi.read()
 
 		except Exception as exception:
 			logging.error('FILE - {} Update content FAILED.\n'.format(type(exception).__name__))
 
 	def update_lbx_name(self):
-		logging.info('FOLD - update_lbx_name({}).'.format(self.name))
+		logging.info('FILE - update_lbx_name({}).'.format(self.name))
 
 		try:
 			parentFolder = os.path.dirname(self.path)
@@ -50,12 +50,17 @@ class File:
 					parentFolder = FolderClass.Folder.get_folder_in_foldList(os.path.split(\
 											os.path.dirname(parentFolder.path))[-1])
 				self.lbx_name += self.name
+				logging.info('FILE - lbx_name -> %s'%(self.lbx_name))
 			else:
 				self.lbx_name = self.name
+				logging.info('FILE - lbx_name -> %s'%(self.lbx_name))
+
 					
 		except Exception as exception:
 			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
+	
 	"""-------------------- File Attribute property ----------------------"""
+	
 	def _get_File_path(self):
 
 		try:

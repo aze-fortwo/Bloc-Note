@@ -13,11 +13,14 @@ def Listbox_click(event):
 	clicked_folder = Folder.get_folder_in_foldList(clicked_content)
 	logging.info('===========Clicked on "'+ clicked_folder.name + '"==============')
 
-	if is_open_in_Listbox(clicked_folder):
-		Listbox_delete_contentList(clicked_folder.contentList, lbx_line)
+	if clicked_folder.dirEntry.is_dir():
+		if is_open_in_Listbox(clicked_folder):
+			Listbox_delete_contentList(clicked_folder.contentList, lbx_line)
 
-	else:
-		Listbox_insert_contentList(clicked_folder.contentList, lbx_line)
+		else:
+			Listbox_insert_contentList(clicked_folder.contentList, lbx_line)
+	elif clicked_folder.dirEntry.is_file():
+		display_file_content(clicked_folder)
 
 
 """--------------------------Listbox_click method-------------------------"""
@@ -47,7 +50,6 @@ def is_open_in_Listbox(folder):
 														 exception))
 
 
-
 def Listbox_delete_contentList(contentList, lbx_line):
 	logging.info("LBX - DEL - Listbox_delete_contentList({})".format(contentList))
 	try:
@@ -63,7 +65,6 @@ def Listbox_delete_contentList(contentList, lbx_line):
 				format(contentList, exception))
 
 
-
 def Listbox_insert_contentList(contentList, lbx_line):
 	logging.info("LBX - ADD - {} item(s) to listbox :".format(len(contentList)))
 	
@@ -71,9 +72,16 @@ def Listbox_insert_contentList(contentList, lbx_line):
 		for content in contentList:
 			logging.info('LBX -  -  "{}" to listbox.'.format(content.name))
 			tki.Listbox.insert(lbx_line[0]+1, content.lbx_name)
+			if content.dirEntry.is_dir():
+				tki.Listbox.itemconfig((lbx_line[0]+1,), foreground='blue')
+			else:
+				tki.Listbox.itemconfig((lbx_line[0]+1,), foreground='green')
 
 	except Exception as exception:
 		logging.error("LBX - ADD - {} items from listbox FAILED:\n<{}>".\
 				format(len(contentList),type(exception).__name__))
 
 
+def display_file_content(fileClicked):
+	tki.Text.delete(0.0,index2=tki.tk.END)
+	tki.Text.insert("insert",fileClicked.content)

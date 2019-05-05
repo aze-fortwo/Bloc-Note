@@ -14,14 +14,14 @@ class Folder:
 
 		self.dirEntry = dirEntry
 		self.name = dirEntry.name
-		self.lbx_name = self.name
+		self.lbx_name = ""
 		
 		Folder.total_folder += 1
 		Folder.foldList.append(self)
 
-		logging.info('Create <%s>'%self)
-		self.update_contentList()
+		logging.info('FOLD - __init__ %s'%self)
 		self.update_lbx_name()
+		self.update_contentList()
 		
 
 	def __repr__(self):
@@ -31,85 +31,80 @@ class Folder:
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
-		logging.info('FOLD - <{}> Update contentList.'.format(self.name))
+		logging.info('FOLD - update_contentList({})'.format(self.name))
 
 		try:
 			for content in os.scandir(self.path):
 
 				if content.is_dir():
 					newFold = Folder(content)
-					newFold.lbx_name = "   " + newFold.lbx_name
 					self.contentList.append(newFold)
+					logging.info('FOLD - Add <{}> to {} contentList'.\
+							format(newFold.name, self.name))
 
 				elif content.is_file():
 					newFile = File(content)
-					newFile.lbx_name = "   " + newFile.lbx_name
 					self.contentList.append(newFile)
-
+					logging.info('FOLD - Add <{}> to {} contentList'.\
+							format(newFile.name, self.name))
 
 		except Exception as exception:
-			logging.error('FOLD - <{}> Update contentList FAILED.\n'.format(type(exception).__name__))
+			logging.error('FOLD - update_contentList({}) FAILED.'.format(type(exception).__name__))
 
 
 	def update_lbx_name(self):
-		logging.info('FOLD - Format "{}" for listbox name.'.format(self.name))
+		logging.info('FOLD - update_lbx_name({}).'.format(self.name))
 
 		try:
-			parentFolder = self.get_parent_folder()
-			print(parentFolder)
-			if Folder.is_in_foldList(parentFolder):
-				self.lbx_name = "   " + self.lbx_name
-				
-				# File.lbx_name update
-				for content in self.contentList:
-					content.lbx_name = "   " + content.lbx_name
+			parentFolder = os.path.dirname(self.path)
+			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+
+			if parentFolder != None:
+				while parentFolder != None:
+					self.lbx_name += '   '
+					parentFolder = Folder.get_folder_in_foldList(os.path.split(\
+											os.path.dirname(parentFolder.path))[-1])
+				self.lbx_name += self.name
+			else:
+				self.lbx_name = self.name
 					
 		except Exception as exception:
-			logging.error('FOLD - Format "{}" FAILED'.format(self.name))
-
-
-	def get_parent_folder(self):
-		logging.info('FOLD - Get parent folder of "{}"'.format(self.name))
-
-		try:
-			return os.path.dirname(self.path)
-
-		except Exception as exception:
-			logging.error('FOLD - Get parent folder of "{}"" FAILED.\n'.format(self.name))
-
-
-	def is_in_foldList(searched_folderName):
-		logging.info('FOLD - Is "{}"  in foldList ?'.format(searched_folderName))
-		try:
-			for folder in Folder.foldList:
-				if folder.lbx_name == searched_folderName:
-					logging.info("YES")
-					return True
-
-		except Exception as exception:
-			logging.error("FOLD - Search in foldList FAILED:\n%s"%exception)
+			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
 
 
 	def get_folder_in_foldList(searched_folderName):
-		logging.info('FOLD - <{}> Get FolderObject from foldList'.format(searched_folderName))
+		logging.info('FOLD - get_folder_in_foldList({})'.format(searched_folderName))
 
 		try :
-			if Folder.is_in_foldList(clicked_content):
+			if Folder.is_in_foldList(searched_folderName):
 				for folder in Folder.foldList:
-					if folder.lbx_name == searched_folderName:
+					if folder.name == searched_folderName \
+					or folder.lbx_name == searched_folderName:
 						logging.info('FOLD - Return <%s>' % folder)
 						return folder
 			else:
 				return None
 
 		except Exception as exception:
-			logging.error('FOLD - Get "{}" from foldList FAILED.\n'.format(type(exception).__name__, searched_folderName))
+			logging.error('FOLD - get_folder_in_foldList({}) FAILED.'.\
+					format(type(exception).__name__, searched_folderName))
 
+	def is_in_foldList(searched_folderName):
+		logging.info('FOLD - Folder.is_in_foldList({})'.format(searched_folderName))
+		try:
+			for folder in Folder.foldList:
+				if folder.lbx_name == searched_folderName or folder.name == searched_folderName:
+					logging.info("FOLD - YES")
+					return True
+			logging.info("FOLD - NO")
+			return False
+
+		except Exception as exception:
+			logging.error("FOLD - Folder.is_in_foldList({}):\n{}".\
+					format(searched_folderName,exception))
 
 
 	"""-------------------- Folder Attribute property ----------------------"""
-
-	
 
 
 	def _get_Folder_path(self):

@@ -14,7 +14,6 @@ unwanted_Files = [	'tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
 					'tk_init.py', 		'FileClass.py',	'Debug.txt']
 
-logging.debug('FIRST SCANNING LOOP')
 for content in os.scandir(os.getcwd()):
 	if content.name not in unwanted_Files:
 		if content.is_dir():
@@ -23,7 +22,6 @@ for content in os.scandir(os.getcwd()):
 			discovered = FileClass.File(content)
 		
 		tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
-
 
 """
 for content in Folder.foldList:

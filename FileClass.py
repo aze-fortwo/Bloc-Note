@@ -2,7 +2,7 @@
 
 import os
 import logging
-
+import FolderClass
 
 
 class File:
@@ -13,11 +13,14 @@ class File:
 	def __init__(self, dirEntry):
 		self._path = dirEntry.path
 		self._content = ""
+		self.dirEntry = dirEntry
 		self.name = dirEntry.name
-		self.lbx_name = self.name
+		self.lbx_name = ""
 
 		File.total_file += 1
-		logging.info('Create <%s> File'%self.name)
+		logging.info('FILE - __init__ %s'% self.name)
+
+		self.update_lbx_name()
 		self.update_content()
 
 	def __repr__(self):
@@ -35,7 +38,24 @@ class File:
 		except Exception as exception:
 			logging.error('FILE - {} Update content FAILED.\n'.format(type(exception).__name__))
 
+	def update_lbx_name(self):
+		logging.info('FOLD - update_lbx_name({}).'.format(self.name))
 
+		try:
+			parentFolder = os.path.dirname(self.path)
+			parentFolder = FolderClass.Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+
+			if parentFolder != None:
+				while parentFolder != None:
+					self.lbx_name += '   '
+					parentFolder = FolderClass.Folder.get_folder_in_foldList(os.path.split(\
+											os.path.dirname(parentFolder.path))[-1])
+				self.lbx_name += self.name
+			else:
+				self.lbx_name = self.name
+					
+		except Exception as exception:
+			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
 	"""-------------------- File Attribute property ----------------------"""
 	def _get_File_path(self):
 

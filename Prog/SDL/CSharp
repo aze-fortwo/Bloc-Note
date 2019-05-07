@@ -1,0 +1,17 @@
+Tourne avec le framework .NET et permet la création d'aplication pro Microsoft.
+
+Le code est compilé pour être traduit en binaire. Pour cela il est transformé en un fichier MSIL qui utilise le CLR pour se changer en binaire.
+
+Lors de la création dun projet C# :
+	NameApp.sln -> fichier de solution qui permet a Visual 			                                                                                 		studio Express de visualiser nos projets
+	NameApp.csproj -> Décrit le projet c#
+	Program.cs -> Cotient du code  c#
+
+
+GENERATION DE LA SOLUTION
+
+Pour transformer le programe écrit en C# en .exe, nous devons générer la solution (build). Plusieurs fichiers sont alors créés dans le dossier bin du projet
+
+Pour exécuter le programme, il faut clicker dans l'onglet débuggage de visual studio, pui Exécuter dans débogage
+
+

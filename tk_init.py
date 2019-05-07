@@ -16,3 +16,8 @@ Listbox.grid(row=0, column=0, sticky='NSEW')
 Text.grid(row=0,column=1, sticky='NSEW')
 
 Listbox.bind('<<ListboxSelect>>',Lbx.Listbox_click)
+
+pop_menu = tk.Menu(app,tearoff=0)
+pop_menu.add_command(label = 'Add File')
+pop_menu.add_command(label='Delete')
+Listbox.bind("<Button-3>", Lbx.do_pop_menu)

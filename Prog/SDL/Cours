@@ -1,0 +1,31 @@
+TABLEAU -> static size, can be multidimentionnal
+type[] tabrName = new type[] {value, value2};
+tabName[index] = value
+
+TABLEAU METHOD
+Array.sort(tabName) -> sort array by alphabetic or numeric  order 
+
+
+LIST -> variable size, not multidimentionnal
+List<type> listName = new List<type>();
+List<type> listName = new list<type> {value, value2};
+
+LIST METHOD
+listName.Add(value);
+listName.RemoveAt(index);
+listName.IndexOf(value); -> return index of value in listName
+
+
+ENUMERATION
+enum enumName
+{
+	varName,
+	varName2 = 1,
+	varName3 -> varName3 = varName2 + 1
+}
+
+enumName newVar; -> Can only take value from previous enumeration
+newVar = enumName.varName; -> return varName
+
+ 
+

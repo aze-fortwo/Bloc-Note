@@ -51,14 +51,14 @@ def is_open_in_Listbox(folder):
 
 
 def Listbox_delete_contentList(contentList, lbx_line):
-	logging.info("LBX - DEL - Listbox_delete_contentList({})".format(contentList))
+	logging.info("LBX - DEL - {} items(s) from listbox".format(len(contentList)))
 	try:
 		for content in contentList:
+			logging.info('LBX -  -  "{}" from listbox.'.format(content.name))
 			if content.dirEntry.is_dir():
 				if is_open_in_Listbox(content):
 					Listbox_delete_contentList(content.contentList,(lbx_line[0]+1,))
 			tki.Listbox.delete(lbx_line[0]+1)
-			logging.info('LBX - DEL - "{}" from listbox.'.format(content.name))
 
 	except Exception as exception:
 		logging.error("LBX - DEL - Listbox_delete_contentList({}) FAILED:\n<{}>".\
@@ -85,3 +85,10 @@ def Listbox_insert_contentList(contentList, lbx_line):
 def display_file_content(fileClicked):
 	tki.Text.delete(0.0,index2=tki.tk.END)
 	tki.Text.insert("insert",fileClicked.content)
+
+
+def do_pop_menu(event):
+	try:
+		tki.pop_menu.tk_popup(event.x_root, event.y_root,0)
+	finally:
+		tki.pop_menu.grab_release()

@@ -46,39 +46,43 @@ def is_open_in_Listbox(folder):
 			return False
 	
 	except Exception as exception:
-		logging.error('LBX - is_open_in_Listbox({}) FAILED:\n<{}>'.format(folder.name,\
-														 exception))
+		logging.error('LBX - is_open_in_Listbox({}) FAILED:\n<{}>'.\
+				format(folder.name,exception))
 
 
 def Listbox_delete_contentList(contentList, lbx_line):
-	logging.info("LBX - DEL - {} items(s) from listbox".format(len(contentList)))
+	logging.info("LBX - DEL - {} items(s) from listbox at lbx_line{}".\
+			format(len(contentList), lbx_line[0]))
 	try:
+		contentList.sort(key= lambda content:content.name, reverse=False)
 		for content in contentList:
-			logging.info('LBX -  -  "{}" from listbox.'.format(content.name))
+			logging.info('LBX -  -  "{}" from listbox at {}.'.\
+					format(content.name, lbx_line[0]+1))
 			if content.dirEntry.is_dir():
 				if is_open_in_Listbox(content):
 					Listbox_delete_contentList(content.contentList,(lbx_line[0]+1,))
 			tki.Listbox.delete(lbx_line[0]+1)
 
 	except Exception as exception:
-		logging.error("LBX - DEL - Listbox_delete_contentList({}) FAILED:\n<{}>".\
-				format(contentList, exception))
+		logging.error("LBX - DEL - Listbox_delete_contentList({} item(s)) FAILED:\n<{}>".\
+				format(len(contentList), exception))
 
 
 def Listbox_insert_contentList(contentList, lbx_line):
 	logging.info("LBX - ADD - {} item(s) to listbox :".format(len(contentList)))
 	
 	try:
+		contentList.sort(key= lambda content:content.name, reverse=True)
 		for content in contentList:
 			logging.info('LBX -  -  "{}" to listbox.'.format(content.name))
 			tki.Listbox.insert(lbx_line[0]+1, content.lbx_name)
 			if content.dirEntry.is_dir():
 				tki.Listbox.itemconfig((lbx_line[0]+1,), foreground='blue')
 			else:
-				tki.Listbox.itemconfig((lbx_line[0]+1,), foreground='green')
+				tki.Listbox.itemconfig((lbx_line[0]+1,), foreground='red')
 
 	except Exception as exception:
-		logging.error("LBX - ADD - {} items from listbox FAILED:\n<{}>".\
+		logging.error("LBX - ADD - {} item(s) from listbox FAILED:\n<{}>".\
 				format(len(contentList),type(exception).__name__))
 
 

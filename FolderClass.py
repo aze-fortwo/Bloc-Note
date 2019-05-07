@@ -7,6 +7,11 @@ class Folder:
 	total_folder = 0
 	foldList = []
 
+	# Unwanted Files for mainFold in main.pyw
+	unwanted_Files = ['tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
+					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
+					'tk_init.py', 		'FileClass.py',	'Debug.txt']
+
 
 	def __init__(self, dirEntry):
 		self._path = dirEntry.path
@@ -16,8 +21,11 @@ class Folder:
 		self.name = dirEntry.name
 		self.lbx_name = ""
 		
-		Folder.total_folder += 1
-		Folder.foldList.append(self)
+
+		
+		if self.name != 'Bloc-Note':
+			Folder.total_folder += 1
+			Folder.foldList.append(self)
 
 		logging.info('FOLD - __init__ %s'%self)
 		self.update_lbx_name()
@@ -35,23 +43,24 @@ class Folder:
 
 		try:
 			for content in os.scandir(self.path):
+				if content.name not in Folder.unwanted_Files:
+					if content.is_dir():
+						newFold = Folder(content)
+						self.contentList.append(newFold)
+						Folder.foldList.append(newFold)
+						logging.info('FOLD - Add <{}> to {} contentList'.\
+								format(newFold.name, self.name))
 
-				if content.is_dir():
-					newFold = Folder(content)
-					self.contentList.append(newFold)
-					Folder.foldList.append(newFold)
-					logging.info('FOLD - Add <{}> to {} contentList'.\
-							format(newFold.name, self.name))
+					elif content.is_file():
+						newFile = File(content)
+						self.contentList.append(newFile)
+						Folder.foldList.append(newFile)
+						logging.info('FOLD - Add <{}> to {} contentList'.\
+								format(newFile.name, self.name))
 
-				elif content.is_file():
-					newFile = File(content)
-					self.contentList.append(newFile)
-					Folder.foldList.append(newFile)
-					logging.info('FOLD - Add <{}> to {} contentList'.\
-							format(newFile.name, self.name))
+			self.contentList.sort(key= lambda content: content.name, reverse=True)
 		except Exception as exception:
 			logging.error('FOLD - update_contentList({}) FAILED.'.format(type(exception).__name__))
-
 
 	def update_lbx_name(self):
 		logging.info('FOLD - update_lbx_name({}).'.format(self.name))
@@ -75,7 +84,6 @@ class Folder:
 					
 		except Exception as exception:
 			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
-
 
 	def get_folder_in_foldList(searched_folderName):
 		logging.info('FOLD - get_folder_in_foldList({})'.format(searched_folderName))
@@ -139,12 +147,5 @@ class Folder:
 			logging.error('FOLD - Set contentList FAILED.\n')
 
 
-
-
-
 	path = property(_get_Folder_path, _set_Folder_path)
 	contentList = property(_get_Folder_contentList, _set_Folder_contentList)
-	
-
-
-

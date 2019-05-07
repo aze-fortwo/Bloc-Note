@@ -8,32 +8,22 @@ import logging
 
 logging.basicConfig(level = logging.DEBUG,\
 		format=' %(asctime)s - %(levelname)s - %(message)s',datefmt='%H:%M:%S')
+
+
 """----------Init Current Working Directory folder-----------"""
 
-unwanted_Files = [	'tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
-					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
-					'tk_init.py', 		'FileClass.py',	'Debug.txt']
+for content in os.scandir(os.path.split(os.getcwd())[0]):
+	if content.name == "Bloc-Note":
+		mainFold = FolderClass.Folder(content)
 
-for content in os.scandir(os.getcwd()):
-	if content.name not in unwanted_Files:
-		if content.is_dir():
-			discovered = FolderClass.Folder(content)
-			tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
-			tki.Listbox.itemconfig(tki.tk.END, foreground='blue')
+for content in mainFold.contentList:
+	if content.dirEntry.is_dir():
+		tki.Listbox.insert(tki.tk.END, content.lbx_name)
+		tki.Listbox.itemconfig(tki.tk.END, foreground='blue')
+	elif content.dirEntry.is_file():
+		tki.Listbox.insert(tki.tk.END, content.lbx_name)
+		tki.Listbox.itemconfig(tki.tk.END, foreground='orange')
 
-
-		if content.is_file():
-			discovered = FileClass.File(content)
-			tki.Listbox.insert(tki.tk.END, discovered.lbx_name)
-			tki.Listbox.itemconfig(tki.tk.END, foreground='orange')
-		
-
-
-"""
-for content in Folder.foldList:
-	for subcontent in content.contentList:
-		print(subcontent.lbx_name)
-"""
 
 """--------------------Tkinter----------------------------"""
 

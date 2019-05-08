@@ -5,23 +5,30 @@ from  FolderClass import Folder
 import tk_init as tki
 import logging
 
+selectedPast = []
+
 def Listbox_click(event):
-	lbx_line = tki.Listbox.curselection()
-	clicked_content = tki.Listbox.get(lbx_line)
+	lbxLine = tki.Listbox.curselection()
+
+	if len(lbxLine) != 0:
+		clickedContent = tki.Listbox.get(lbxLine)
+		selectedPast.append(clickedContent)
+	else:
+		clickedContent = selectedPast[-1]
 
 
-	clicked_folder = Folder.get_folder_in_foldList(clicked_content)
-	logging.info('===========Clicked on "'+ clicked_folder.name + '"==============')
+	clickedContentObject = Folder.get_folder_in_foldList(clickedContent)
+	logging.info('===========Clicked on "'+ clickedContentObject.name + '"==============')
 
-	if clicked_folder.dirEntry.is_dir():
-		if is_open_in_Listbox(clicked_folder):
-			Listbox_delete_contentList(clicked_folder.contentList, lbx_line)
+	if clickedContentObject.dirEntry.is_dir():
+		if is_open_in_Listbox(clickedContentObject):
+			Listbox_delete_contentList(clickedContentObject.contentList, lbxLine)
 
 		else:
-			Listbox_insert_contentList(clicked_folder.contentList, lbx_line)
+			Listbox_insert_contentList(clickedContentObject.contentList, lbxLine)
 	
-	elif clicked_folder.dirEntry.is_file():
-		display_file_content(clicked_folder)
+	elif clickedContentObject.dirEntry.is_file():
+		display_file_content(clickedContentObject)
 
 def is_open_in_Listbox(folder):
 	logging.info('LBX - is_open_in_Listbox({})'.format(folder.name))

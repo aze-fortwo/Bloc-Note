@@ -10,7 +10,7 @@ class Folder:
 	# Unwanted Files for mainFold in main.pyw
 	unwanted_Files = ['tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
-					'tk_init.py', 		'FileClass.py',	'Debug.txt']
+					'tk_init.py', 		'FileClass.py',	'Debug.txt',	'tk_text.py']
 
 
 	def __init__(self, dirEntry):

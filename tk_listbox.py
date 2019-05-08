@@ -109,7 +109,10 @@ def add_file(event):
 	fileName = tki.NameEntry.get()
 	logging.info('LBX - Adding "%s"'%fileName)
 	selectedContent = selectedPast[-1]
-	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	if selectedContent != "":
+		selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	else:
+		selectedContent = Folder.mainFold
 	lbxLine = get_lbx_line(selectedContent)
 
 	if selectedContent != None:
@@ -135,7 +138,10 @@ def add_folder(event):
 	folderName = tki.NameEntry.get()
 	logging.info('LBX - Adding "%s"'%folderName)
 	selectedContent = selectedPast[-1]
-	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	if selectedContent != "":
+		selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	else:
+		selectedContent = Folder.mainFold
 	lbxLine = get_lbx_line(selectedContent)
 
 	if selectedContent != None:

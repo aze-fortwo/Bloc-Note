@@ -23,7 +23,7 @@ for content in mainFold.contentList:
 		tki.Listbox.itemconfig(tki.tk.END, foreground='blue')
 	elif content.dirEntry.is_file():
 		tki.Listbox.insert(tki.tk.END, content.lbx_name)
-		tki.Listbox.itemconfig(tki.tk.END, foreground='orange')
+		tki.Listbox.itemconfig(tki.tk.END, foreground='red')
 
 
 """--------------------Tkinter----------------------------"""

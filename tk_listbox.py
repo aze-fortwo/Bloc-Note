@@ -19,11 +19,9 @@ def Listbox_click(event):
 
 		else:
 			Listbox_insert_contentList(clicked_folder.contentList, lbx_line)
+	
 	elif clicked_folder.dirEntry.is_file():
 		display_file_content(clicked_folder)
-
-
-"""--------------------------Listbox_click method-------------------------"""
 
 def is_open_in_Listbox(folder):
 	logging.info('LBX - is_open_in_Listbox({})'.format(folder.name))
@@ -49,14 +47,17 @@ def is_open_in_Listbox(folder):
 		logging.error('LBX - is_open_in_Listbox({}) FAILED:\n<{}>'.\
 				format(folder.name,exception))
 
-
 def Listbox_delete_contentList(contentList, lbx_line):
 	logging.info("LBX - DEL - {} items(s) from listbox at lbx_line{}".\
 			format(len(contentList), lbx_line[0]))
 	try:
-		contentList.sort(key= lambda content:content.name, reverse=False)
+		newList = []
 		for content in contentList:
-			logging.info('LBX -  -  "{}" from listbox at {}.'.\
+			newList.append(content)
+
+		newList.sort(key= lambda content:content.name, reverse=True)
+		for content in newList:
+			logging.info('LBX -  -  "{}" line {}.'.\
 					format(content.name, lbx_line[0]+1))
 			if content.dirEntry.is_dir():
 				if is_open_in_Listbox(content):
@@ -67,12 +68,10 @@ def Listbox_delete_contentList(contentList, lbx_line):
 		logging.error("LBX - DEL - Listbox_delete_contentList({} item(s)) FAILED:\n<{}>".\
 				format(len(contentList), exception))
 
-
 def Listbox_insert_contentList(contentList, lbx_line):
 	logging.info("LBX - ADD - {} item(s) to listbox :".format(len(contentList)))
 	
 	try:
-		contentList.sort(key= lambda content:content.name, reverse=True)
 		for content in contentList:
 			logging.info('LBX -  -  "{}" to listbox.'.format(content.name))
 			tki.Listbox.insert(lbx_line[0]+1, content.lbx_name)
@@ -85,11 +84,9 @@ def Listbox_insert_contentList(contentList, lbx_line):
 		logging.error("LBX - ADD - {} item(s) from listbox FAILED:\n<{}>".\
 				format(len(contentList),type(exception).__name__))
 
-
 def display_file_content(fileClicked):
 	tki.Text.delete(0.0,index2=tki.tk.END)
 	tki.Text.insert("insert",fileClicked.content)
-
 
 def do_pop_menu(event):
 	try:

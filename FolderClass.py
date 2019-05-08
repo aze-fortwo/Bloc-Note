@@ -58,7 +58,6 @@ class Folder:
 						logging.info('FOLD - Add <{}> to {} contentList'.\
 								format(newFile.name, self.name))
 
-			self.contentList.sort(key= lambda content: content.name, reverse=True)
 		except Exception as exception:
 			logging.error('FOLD - update_contentList({}) FAILED.'.format(type(exception).__name__))
 

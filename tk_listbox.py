@@ -169,7 +169,6 @@ def delete_content():
 	else:
 		parentFolder = Folder.mainFold
 
-	print(parentFolder)
 
 	if selectedContent != None:
 		if selectedContent.dirEntry.is_file():

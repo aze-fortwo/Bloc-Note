@@ -11,28 +11,53 @@ def pop_alert(text):
 	wait = Timer(2, Alert.grid_remove)
 	wait.start()
 
+def creation_box(mode):
+	NameEntry.delete(0, last=tk.END)
+	tk.Label(CreationBox, text='Name:', justify=tk.LEFT).grid(row=0,column=0, sticky='SW')
+	NameEntry.grid(row=0,column=1, sticky='SEW')
+	CreationBox.grid(row=0, column=1, sticky='SW')
+	NameEntry.focus_set()
+
+	if mode == 'File':
+		NameEntry.bind('<Return>',Lbx.add_file)
+	elif mode =='Folder':
+		NameEntry.bind('<Return>',Lbx.add_folder)
+
+
+
+
 app = tk.Tk()
 
+#=================GENERAL WIDGET=================
 Background = tk.Frame(app)
-
 Listbox = tk.Listbox(Background)
-
 Text = tk.Text(Background, width = 60, wrap=tk.WORD)
-
 Alert = tk.Message(Background, width=200, bg='white', text="", justify=tk.LEFT)
 
+
+#=================CREATION BOX=================
+CreationBox = tk.Frame(Background, background='light grey')
+NameEntry = tk.Entry(CreationBox, width=73)
+
+
+#=================GRID=================
 Background.grid(row=0,column=0)
 Listbox.grid(row=0, column=0, sticky='NSEW')
 Text.grid(row=0,column=1, sticky='NSEW')
 
+
+#=================BINDING=================
 Listbox.bind('<<ListboxSelect>>',Lbx.Listbox_click)
 Listbox.bind("<Button-3>", Lbx.do_pop_menu)
 Text.bind("<Control-KeyPress-s>", tkt.save_text)
 app.bind("<Control-KeyPress-w>", lambda command:app.quit())
 
+
+#=================Right-Click Menu=================
 pop_menu = tk.Menu(app,tearoff=0)
-pop_menu.add_command(label = 'Add File', command=Lbx.add_file)
-pop_menu.add_command(label='Delete')
+pop_menu.add_command(label = 'Add File', command=lambda:creation_box("File"))
+pop_menu.add_command(label='Add Folder', command=lambda:creation_box("Folder"))
+pop_menu.add_command(label='Delete', command=Lbx.delete_content)
 
 
 

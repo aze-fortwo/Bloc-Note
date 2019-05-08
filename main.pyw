@@ -13,8 +13,9 @@ logging.basicConfig(level = logging.DEBUG,\
 """----------Init Current Working Directory folder-----------"""
 
 for content in os.scandir(os.path.split(os.getcwd())[0]):
-	if content.name == "Bloc-Note":
+	if content.name == os.path.split(os.getcwd())[1]:
 		mainFold = FolderClass.Folder(content)
+
 
 for content in mainFold.contentList:
 	if content.dirEntry.is_dir():

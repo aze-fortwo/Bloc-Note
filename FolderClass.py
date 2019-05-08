@@ -2,11 +2,12 @@
 import os
 from FileClass import File
 import logging
+import shutil
 
 class Folder:
 	total_folder = 0
 	foldList = []
-
+	mainFold = ''
 	# Unwanted Files for mainFold in main.pyw
 	unwanted_Files = ['tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
 					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
@@ -23,9 +24,11 @@ class Folder:
 		
 
 		
-		if self.name != 'Bloc-Note':
+		if self.name != os.path.split(os.getcwd())[1]:
 			Folder.total_folder += 1
 			Folder.foldList.append(self)
+		else:
+			Folder.mainFold = self
 
 		logging.info('FOLD - __init__ %s'%self)
 		self.update_lbx_name()
@@ -40,7 +43,7 @@ class Folder:
 
 	def update_contentList(self):
 		logging.info('FOLD - update_contentList({})'.format(self.name))
-
+		self.contentList = []
 		try:
 			for content in os.scandir(self.path):
 				if content.name not in Folder.unwanted_Files:
@@ -116,8 +119,41 @@ class Folder:
 			logging.error("FOLD - Folder.is_in_foldList({}):\n{}".\
 					format(searched_folderName,exception))
 
+	def add_file(self, fileName):
+		try:
+			logging.info('FOLD - Adding file "%s" to %s'%(fileName, self.name))
+			filePath = os.path.join(self.path,fileName)
+			ofi = open(filePath, mode='w+', encoding='utf-8')
+			ofi.close()
+			self.update_contentList()
 
+		except Exception as exception:
+			logging.error('FOLD - Adding file "%s" to %s FAILED:\n %s'\
+						%(fileName, self.name, exception))
+	
+	def add_folder(self, folderName):
+		try:
+			logging.info('FOLD - Adding folder "%s" to %s'%(folderName, self.name))
+			folderPath = os.path.join(self.path,folderName)
+			os.makedirs(folderPath)
+			self.update_contentList()
+		except Exception as exception:
+			logging.error('FOLD - Adding folder "%s" to %s FAILED:\n %s'\
+						%(fileName, self.name, exception))
 
+	def delete_content(self, content):
+		try:
+			logging.info('FOLD - Deleting content "%s" to %s'%(content.name, self.name))
+			if content.dirEntry.is_dir():
+				shutil.rmtree(content.path)
+			elif content.dirEntry.is_file():
+				os.remove(content.path)
+
+			self.update_contentList()
+
+		except Exception as exception:
+			logging.error('FOLD - Deleting file "%s" to %s FAILED:\n %s'\
+						%(content.name, self.name, exception))
 	"""-------------------- Folder Attribute property ----------------------"""
 
 

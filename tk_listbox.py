@@ -96,18 +96,110 @@ def display_file_content(fileClicked):
 	tki.Text.insert("insert",fileClicked.content)
 
 def do_pop_menu(event):
-	logging.info('Pop menu at ({} , {})'.format(event.x_root, event.y_root))
 	try:
 		tki.pop_menu.tk_popup(event.x_root, event.y_root, 0)
 		selectedPast.append(tki.Listbox.get(tki.Listbox.nearest(event.y)))
+		logging.info('===========Pop menu at ({} , {}) - "{}"'.\
+			format(event.x_root, event.y_root,tki.Listbox.get(tki.Listbox.nearest(event.y))))
 	finally:
 		tki.pop_menu.grab_release()
 
-def add_file():
+def add_file(event):
+	tki.CreationBox.grid_forget()
+	fileName = tki.NameEntry.get()
+	logging.info('LBX - Adding "%s"'%fileName)
 	selectedContent = selectedPast[-1]
 	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	lbxLine = get_lbx_line(selectedContent)
+
 	if selectedContent != None:
-		if selectedContent.is_dir():
-			pass
-		elif selectedContent.is_file():
-			index = tki.Listbox.itemcget(index)
+		if selectedContent.dirEntry.is_dir():
+			if is_open_in_Listbox(selectedContent):
+				Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
+				selectedContent.add_file(fileName)
+				Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
+			else:
+				selectedContent.add_file(fileName)
+		
+		elif selectedContent.dirEntry.is_file():
+			parentFolder = os.path.dirname(selectedContent.path)
+			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+			parentLbxLine = get_lbx_line(parentFolder)
+
+			Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
+			parentFolder.add_file(fileName)
+			Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
+
+def add_folder(event):
+	tki.CreationBox.grid_forget()
+	folderName = tki.NameEntry.get()
+	logging.info('LBX - Adding "%s"'%folderName)
+	selectedContent = selectedPast[-1]
+	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	lbxLine = get_lbx_line(selectedContent)
+
+	if selectedContent != None:
+		if selectedContent.dirEntry.is_dir():
+			if is_open_in_Listbox(selectedContent):
+				Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
+				selectedContent.add_folder(folderName)
+				Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
+			else:
+				selectedContent.add_folder(folderName)
+
+		elif selectedContent.dirEntry.is_file():
+			parentFolder = os.path.dirname(selectedContent.path)
+			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+			parentLbxLine = get_lbx_line(parentFolder)
+
+			Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
+			parentFolder.add_folder(folderName)
+			Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
+
+def delete_content():
+	selectedContent = selectedPast[-1]
+	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	lbxLine = get_lbx_line(selectedContent)
+	
+	logging.info('LBX - Deleting "%s"'%selectedContent.name)
+	
+	parentFolder = os.path.dirname(selectedContent.path)
+	if os.path.split(parentFolder)[1] != Folder.mainFold.name:
+		parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[1])
+	else:
+		parentFolder = Folder.mainFold
+
+	print(parentFolder)
+
+	if selectedContent != None:
+		if selectedContent.dirEntry.is_file():
+			parentFolder.delete_content(selectedContent)
+			
+			count = 0
+			for lbxContent in tki.Listbox.get(0, last=tki.tk.END):
+				if lbxContent == selectedContent.lbx_name:
+					break
+				count += 1
+			tki.Listbox.delete(count)
+		
+		elif selectedContent.dirEntry.is_dir():
+			if is_open_in_Listbox(selectedContent):
+				Listbox_delete_contentList(parentFolder.contentList, (lbxLine,))
+				parentFolder.delete_content(selectedContent)
+			else:
+				parentFolder.delete_content(selectedContent)
+			
+			count = 0
+			for lbxContent in tki.Listbox.get(0, last=tki.tk.END):
+				if lbxContent == selectedContent.lbx_name:
+					break
+				count += 1
+			tki.Listbox.delete(count)
+
+def get_lbx_line(contentName):
+	index = 0
+	for content in tki.Listbox.get(0, last=tki.tk.END):
+		if content == contentName.lbx_name:
+			break
+		index += 1
+	return index

@@ -5,6 +5,12 @@ import tk_listbox as Lbx
 import tk_text as tkt
 from threading import Timer
 
+def pop_alert(text):
+	Alert.config(text=text)
+	Alert.grid(row=0, column=1, sticky='SW')
+	wait = Timer(2, Alert.grid_remove)
+	wait.start()
+
 app = tk.Tk()
 
 Background = tk.Frame(app)
@@ -25,12 +31,8 @@ Text.bind("<Control-KeyPress-s>", tkt.save_text)
 app.bind("<Control-KeyPress-w>", lambda command:app.quit())
 
 pop_menu = tk.Menu(app,tearoff=0)
-pop_menu.add_command(label = 'Add File')
+pop_menu.add_command(label = 'Add File', command=Lbx.add_file)
 pop_menu.add_command(label='Delete')
 
-def pop_alert(text):
-	Alert.config(text=text)
-	Alert.grid(row=0, column=1, sticky='SW')
-	wait = Timer(2, Alert.grid_remove)
-	wait.start()
-		
+
+

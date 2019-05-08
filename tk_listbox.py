@@ -96,7 +96,18 @@ def display_file_content(fileClicked):
 	tki.Text.insert("insert",fileClicked.content)
 
 def do_pop_menu(event):
+	logging.info('Pop menu at ({} , {})'.format(event.x_root, event.y_root))
 	try:
-		tki.pop_menu.tk_popup(event.x_root, event.y_root,0)
+		tki.pop_menu.tk_popup(event.x_root, event.y_root, 0)
+		selectedPast.append(tki.Listbox.get(tki.Listbox.nearest(event.y)))
 	finally:
 		tki.pop_menu.grab_release()
+
+def add_file():
+	selectedContent = selectedPast[-1]
+	selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	if selectedContent != None:
+		if selectedContent.is_dir():
+			pass
+		elif selectedContent.is_file():
+			index = tki.Listbox.itemcget(index)

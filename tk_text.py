@@ -18,7 +18,11 @@ def save_text(event):
 
 		with open(curFile.path, encoding='utf-8', mode='r') as ofi:
 			curFile.content = ofi.read()
-			
+
 		tki.pop_alert('Saving text from "%s"'%curFile.name)
+
 	except Exception as exception:
 		logging.error('TXT - Saving {} FAILED:\n {}'.format(curFile.name, exception))
+
+
+

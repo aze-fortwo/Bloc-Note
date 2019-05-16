@@ -3,7 +3,7 @@
 import os
 import logging
 import FolderClass
-
+logging.disable(logging.INFO)
 
 class File:
 	

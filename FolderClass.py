@@ -4,6 +4,8 @@ from FileClass import File
 import logging
 import shutil
 
+logging.disable(logging.INFO)
+
 class Folder:
 	total_folder = 0
 	foldList = []

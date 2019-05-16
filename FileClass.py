@@ -44,11 +44,11 @@ class File:
 			parentFolder = os.path.dirname(self.path)
 			parentFolder = FolderClass.Folder.get_folder_in_foldList(os.path.split(parentFolder)[1])
 
-			if parentFolder != None:
+			if parentFolder != None and parentFolder != FolderClass.Folder.mainFold:
 				while parentFolder != None:
 					self.lbx_name += '   '
-					parentFolder = FolderClass.Folder.get_folder_in_foldList(os.path.split(\
-											os.path.dirname(parentFolder.path))[1])
+					parentFolder = FolderClass.Folder.get_folder_in_foldList(\
+								os.path.split( os.path.dirname(parentFolder.path))[1]	)
 				self.lbx_name += self.name
 				logging.info('FILE - lbx_name -> %s'%(self.lbx_name))
 			else:

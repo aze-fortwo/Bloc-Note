@@ -23,7 +23,9 @@ def creation_box(mode):
 	elif mode =='Folder':
 		NameEntry.bind('<Return>',Lbx.add_folder)
 
-
+def Listbox_display_file_content(fileClicked):
+	Text.delete(0.0,index2=tk.END)
+	Text.insert("insert",fileClicked.content)
 
 
 app = tk.Tk()
@@ -40,6 +42,13 @@ CreationBox = tk.Frame(Background, background='light grey')
 NameEntry = tk.Entry(CreationBox, width=73)
 
 
+#=================Right-Click Menu=================
+pop_menu = tk.Menu(app,tearoff=0)
+pop_menu.add_command(label = 'Add File', command=lambda:creation_box("File"))
+pop_menu.add_command(label='Add Folder', command=lambda:creation_box("Folder"))
+pop_menu.add_command(label='Delete', command=Lbx.delete_content)
+
+
 #=================GRID=================
 Background.grid(row=0,column=0)
 Listbox.grid(row=0, column=0, sticky='NSEW')
@@ -49,15 +58,9 @@ Text.grid(row=0,column=1, sticky='NSEW')
 #=================BINDING=================
 Listbox.bind('<<ListboxSelect>>',Lbx.Listbox_click)
 Listbox.bind("<Button-3>", Lbx.do_pop_menu)
-Text.bind("<Control-KeyPress-s>", tkt.save_text)
+
 app.bind("<Control-KeyPress-w>", lambda command:app.quit())
+app.bind("<Control-KeyPress-W>", lambda command:app.quit())
 
-
-#=================Right-Click Menu=================
-pop_menu = tk.Menu(app,tearoff=0)
-pop_menu.add_command(label = 'Add File', command=lambda:creation_box("File"))
-pop_menu.add_command(label='Add Folder', command=lambda:creation_box("Folder"))
-pop_menu.add_command(label='Delete', command=Lbx.delete_content)
-
-
-
+Text.bind("<Control-KeyPress-s>", tkt.save_text)
+Text.bind("<Control-KeyPress-S>", tkt.save_text)

@@ -28,7 +28,87 @@ def Listbox_click(event):
 			Listbox_insert_contentList(clickedContentObject.contentList, lbxLine)
 	
 	elif clickedContentObject.dirEntry.is_file():
-		display_file_content(clickedContentObject)
+		tki.Listbox_display_file_content(clickedContentObject)
+
+def do_pop_menu(event):
+	try:
+		tki.pop_menu.tk_popup(event.x_root, event.y_root, 0)
+
+		nearFolderClick = tki.Listbox.get(tki.Listbox.nearest(event.y))
+		nearFolder = Folder.get_folder_in_foldList(nearFolderClick)
+
+		if nearFolder == None:
+			if Folder.is_in_mainFold(nearFolder):
+				selectedPast.append(Folder.mainFold.name)
+		if nearFolder != None:
+			selectedPast.append(nearFolderClick)
+
+		logging.info('===========Pop menu at ({} , {}) - "{}"'.\
+			format(event.x_root, event.y_root,tki.Listbox.get(tki.Listbox.nearest(event.y))))
+	finally:
+		tki.pop_menu.grab_release()
+
+def add_file(event):
+	tki.CreationBox.grid_forget()
+
+	fileName = tki.NameEntry.get()
+	logging.info('LBX - Adding "%s"'%fileName)
+
+	print(Folder.foldList)
+
+	selectedContent = Folder.get_folder_in_foldList(selectedPast[-1])
+	if selectedContent == None:
+		selectedContent = FolderClass.Folder.mainFold
+
+	lbxLine = get_lbx_line(selectedContent.lbx_name)
+
+	
+	if selectedContent.dirEntry.is_dir():
+		if is_open_in_Listbox(selectedContent):
+			Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
+			selectedContent.add_file(fileName)
+			Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
+		else:
+			selectedContent.add_file(fileName)
+	
+	elif selectedContent.dirEntry.is_file():
+		parentFolder = os.path.dirname(selectedContent.path)
+		parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+		parentLbxLine = get_lbx_line(parentFolder)
+
+		Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
+		parentFolder.add_file(fileName)
+		Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
+
+def add_folder(event):
+	tki.CreationBox.grid_forget()
+	folderName = tki.NameEntry.get()
+	logging.info('LBX - Adding "%s"'%folderName)
+	selectedContent = selectedPast[-1]
+	if selectedContent != "":
+		selectedContent = Folder.get_folder_in_foldList(selectedContent)
+	else:
+		selectedContent = Folder.mainFold
+	lbxLine = get_lbx_line(selectedContent)
+
+	if selectedContent != None:
+		if selectedContent.dirEntry.is_dir():
+			if is_open_in_Listbox(selectedContent):
+				Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
+				selectedContent.add_folder(folderName)
+				Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
+			else:
+				selectedContent.add_folder(folderName)
+
+		elif selectedContent.dirEntry.is_file():
+			parentFolder = os.path.dirname(selectedContent.path)
+			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
+			parentLbxLine = get_lbx_line(parentFolder)
+
+			Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
+			parentFolder.add_folder(folderName)
+			Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
+
 
 def is_open_in_Listbox(folder):
 	logging.info('LBX - is_open_in_Listbox({})'.format(folder.name))
@@ -37,8 +117,8 @@ def is_open_in_Listbox(folder):
 		contentListContent_in_lbx = len(folder.contentList)
 
 		for content in folder.contentList:
-			if os.path.split(content.path)[0] == folder.path:
-				if content.lbx_name in tki.Listbox.get(0,last=tki.tk.END):
+			if content.lbx_name in tki.Listbox.get(0,last=tki.tk.END):
+				if os.path.split(content.path)[0] == folder.path:
 					contentListContent_in_lbx -= 1
 
 
@@ -91,77 +171,6 @@ def Listbox_insert_contentList(contentList, lbx_line):
 		logging.error("LBX - ADD - {} item(s) from listbox FAILED:\n<{}>".\
 				format(len(contentList),type(exception).__name__))
 
-def display_file_content(fileClicked):
-	tki.Text.delete(0.0,index2=tki.tk.END)
-	tki.Text.insert("insert",fileClicked.content)
-
-def do_pop_menu(event):
-	try:
-		tki.pop_menu.tk_popup(event.x_root, event.y_root, 0)
-		selectedPast.append(tki.Listbox.get(tki.Listbox.nearest(event.y)))
-		logging.info('===========Pop menu at ({} , {}) - "{}"'.\
-			format(event.x_root, event.y_root,tki.Listbox.get(tki.Listbox.nearest(event.y))))
-	finally:
-		tki.pop_menu.grab_release()
-
-def add_file(event):
-	tki.CreationBox.grid_forget()
-	fileName = tki.NameEntry.get()
-	logging.info('LBX - Adding "%s"'%fileName)
-	selectedContent = selectedPast[-1]
-	if selectedContent != "":
-		selectedContent = Folder.get_folder_in_foldList(selectedContent)
-	else:
-		selectedContent = Folder.mainFold
-	lbxLine = get_lbx_line(selectedContent)
-
-	if selectedContent != None:
-		if selectedContent.dirEntry.is_dir():
-			if is_open_in_Listbox(selectedContent):
-				Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
-				selectedContent.add_file(fileName)
-				Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
-			else:
-				selectedContent.add_file(fileName)
-		
-		elif selectedContent.dirEntry.is_file():
-			parentFolder = os.path.dirname(selectedContent.path)
-			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
-			parentLbxLine = get_lbx_line(parentFolder)
-
-			Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
-			parentFolder.add_file(fileName)
-			Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
-
-def add_folder(event):
-	tki.CreationBox.grid_forget()
-	folderName = tki.NameEntry.get()
-	logging.info('LBX - Adding "%s"'%folderName)
-	selectedContent = selectedPast[-1]
-	if selectedContent != "":
-		selectedContent = Folder.get_folder_in_foldList(selectedContent)
-	else:
-		selectedContent = Folder.mainFold
-	lbxLine = get_lbx_line(selectedContent)
-
-	if selectedContent != None:
-		if selectedContent.dirEntry.is_dir():
-			if is_open_in_Listbox(selectedContent):
-				Listbox_delete_contentList(selectedContent.contentList, (lbxLine,))
-				selectedContent.add_folder(folderName)
-				Listbox_insert_contentList(selectedContent.contentList, (lbxLine,))
-			else:
-				selectedContent.add_folder(folderName)
-
-		elif selectedContent.dirEntry.is_file():
-			parentFolder = os.path.dirname(selectedContent.path)
-			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
-			parentLbxLine = get_lbx_line(parentFolder)
-
-			Listbox_delete_contentList(parentFolder.contentList, (parentLbxLine,))
-			parentFolder.add_folder(folderName)
-			Listbox_insert_contentList(parentFolder.contentList, (parentLbxLine,))
-
 def delete_content():
 	selectedContent = selectedPast[-1]
 	selectedContent = Folder.get_folder_in_foldList(selectedContent)
@@ -204,7 +213,7 @@ def delete_content():
 def get_lbx_line(contentName):
 	index = 0
 	for content in tki.Listbox.get(0, last=tki.tk.END):
-		if content == contentName.lbx_name:
+		if content == contentName:
 			break
 		index += 1
 	return index

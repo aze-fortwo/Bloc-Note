@@ -7,11 +7,11 @@ import shutil
 class Folder:
 	total_folder = 0
 	foldList = []
-	mainFold = ''
-	# Unwanted Files for mainFold in main.pyw
-	unwanted_Files = ['tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',
-					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',
-					'tk_init.py', 		'FileClass.py',	'Debug.txt',	'tk_text.py']
+	mainFold = ''	#Launcher's parent folder
+	
+	unwanted_Files = ['tk_listbox.py',	'.git',			'.gitignore',	'Bloc Note.pyw',#
+					'FolderClass.py',	'README.md',	'main.pyw',		'__pycache__',	# Unwanted Files for mainFold in main.pyw
+					'tk_init.py', 		'FileClass.py',	'Debug.txt',	'tk_text.py']	#
 
 
 	def __init__(self, dirEntry):
@@ -34,17 +34,18 @@ class Folder:
 		self.update_lbx_name()
 		self.update_contentList()
 		
-
 	def __repr__(self):
 			folderLen = len(self.contentList)
 			return '"{}" with {} file(s) inside.'.format(self.name, folderLen)
 
+
+
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
-		logging.info('FOLD - update_contentList({})'.format(self.name))
-		self.contentList = []
 		try:
+			logging.info('FOLD - update_contentList({})'.format(self.name))
+			self.contentList = []
 			for content in os.scandir(self.path):
 				if content.name not in Folder.unwanted_Files:
 					if content.is_dir():
@@ -65,13 +66,13 @@ class Folder:
 			logging.error('FOLD - update_contentList({}) FAILED.'.format(type(exception).__name__))
 
 	def update_lbx_name(self):
-		logging.info('FOLD - update_lbx_name({}).'.format(self.name))
 
 		try:
+			logging.info('FOLD - update_lbx_name({}).'.format(self.name))
 			parentFolder = os.path.dirname(self.path)
 			parentFolder = Folder.get_folder_in_foldList(os.path.split(parentFolder)[-1])
 
-			if parentFolder != None:
+			if parentFolder != None and parentFolder != Folder.mainFold:
 				while parentFolder != None:
 					self.lbx_name += '   '
 					parentFolder = Folder.get_folder_in_foldList(os.path.split(\
@@ -88,16 +89,19 @@ class Folder:
 			logging.error('FOLD - update_lbx_name({}) FAILED:\n{}'.format(self.name, exception))
 
 	def get_folder_in_foldList(searched_folderName):
-		logging.info('FOLD - get_folder_in_foldList({})'.format(searched_folderName))
-
 		try :
+			logging.info('FOLD - get_folder_in_foldList({})'.format(searched_folderName))
+			
+
 			if Folder.is_in_foldList(searched_folderName):
 				for folder in Folder.foldList:
 					if folder.name == searched_folderName \
 					or folder.lbx_name == searched_folderName:
 						logging.info('FOLD - Return <%s>' % folder)
 						return folder
+			
 			else:
+				logging.info('FOLD - Return None')
 				return None
 
 		except Exception as exception:
@@ -123,8 +127,10 @@ class Folder:
 		try:
 			logging.info('FOLD - Adding file "%s" to %s'%(fileName, self.name))
 			filePath = os.path.join(self.path,fileName)
+			
 			ofi = open(filePath, mode='w+', encoding='utf-8')
 			ofi.close()
+			
 			self.update_contentList()
 
 		except Exception as exception:
@@ -154,8 +160,20 @@ class Folder:
 		except Exception as exception:
 			logging.error('FOLD - Deleting file "%s" to %s FAILED:\n %s'\
 						%(content.name, self.name, exception))
-	"""-------------------- Folder Attribute property ----------------------"""
+	
+	def is_in_mainFold(searched_folder):
+		try:
+			logging.info('Is "%s" in mainFold ?'%searched_folder.name)
+			for content in Folder.mainFold.contentList:
+				if content.name == searched_folder.name:
+					if os.path.split(content.path)[0] == os.path.split(searched_folder.path)[0]:
+						return True
+				return False
 
+		except Exception as exception:
+			logging.error('Is "%s" in mainFold FAILED:\n%s'%(searched_folder.name, exception))
+
+	"""-------------------- Folder Attribute property ----------------------"""
 
 	def _get_Folder_path(self):
 		try:

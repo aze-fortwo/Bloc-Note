@@ -5,7 +5,7 @@ from  FolderClass import Folder
 import tk_init as tki
 import logging
 
-logging.disable(logging.INFO)
+#logging.disable(logging.INFO)
 
 selectedPast = []
 
@@ -38,7 +38,7 @@ def do_pop_menu(event):
 
 		nearFolderClick = tki.Listbox.get(tki.Listbox.nearest(event.y))
 		nearFolder = Folder.get_folder_in_foldList(nearFolderClick)
-
+		
 		if nearFolder == None:
 			if Folder.is_in_mainFold(nearFolder):
 				selectedPast.append(Folder.mainFold.name)

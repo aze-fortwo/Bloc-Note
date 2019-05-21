@@ -41,7 +41,6 @@ class Folder:
 			return '"{}" with {} file(s) inside.'.format(self.name, folderLen)
 
 
-
 	"""--------------------Folder Instance method -----------------------"""
 
 	def update_contentList(self):
@@ -107,19 +106,26 @@ class Folder:
 				return None
 
 		except Exception as exception:
-			logging.error('FOLD - get_folder_in_foldList({}) FAILED.'.\
-					format(type(exception).__name__, searched_folderName))
+			logging.error('FOLD - get_folder_in_foldList(%s) FAILED:\n%s'\
+					%(searched_folderName, exception))
 
 	def is_in_foldList(searched_folderName):
-		logging.info('FOLD - Folder.is_in_foldList({})'.format(searched_folderName))
 		try:
+			logging.info('FOLD - Folder.is_in_foldList({})'.format(searched_folderName))
+			occurence = []
+
 			for folder in Folder.foldList:
 				if folder.lbx_name == searched_folderName or folder.name == searched_folderName:
-					logging.info("FOLD - YES")
-					return True
-
-			logging.info("FOLD - NO")
-			return False
+					logging.info("FOLD - YES - %s"%folder)
+					occurence.append(folder)
+			
+			if len(occurence) == 1:
+				return True
+			elif len(occurence) == 0:
+				logging.info("FOLD - NO")
+				return False
+			elif len(occurence) > 1:
+				return True
 
 		except Exception as exception:
 			logging.error("FOLD - Folder.is_in_foldList({}):\n{}".\

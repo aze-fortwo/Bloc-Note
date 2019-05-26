@@ -140,8 +140,8 @@ def add_folder(event):
 
 def display_file_content(fileClicked):
 	tkt.Displayed = fileClicked.name
-	Text.delete(0.0,index2=tk.END)
-	Text.insert("insert",fileClicked.content)
+	tki.Text.delete(0.0,index2=tki.tk.END)
+	tki.Text.insert("insert",fileClicked.content)
 
 def is_open_in_Listbox(folder):
 	logging.info('LBX - is_open_in_Listbox({})'.format(folder.name))

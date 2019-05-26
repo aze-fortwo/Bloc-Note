@@ -23,13 +23,11 @@ def creation_box(mode):
 	elif mode =='Folder':
 		NameEntry.bind('<Return>',Lbx.add_folder)
 
-def Listbox_display_file_content(fileClicked):
-	Text.delete(0.0,index2=tk.END)
-	Text.insert("insert",fileClicked.content)
+
 
 
 app = tk.Tk()
-
+app.title('Bloc Note ~ Aze')
 #=================GENERAL WIDGET=================
 Background = tk.Frame(app)
 Listbox = tk.Listbox(Background)

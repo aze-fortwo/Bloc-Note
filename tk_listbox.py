@@ -3,6 +3,7 @@
 import os
 from  FolderClass import Folder
 import tk_init as tki
+import tk_text as tkt
 import logging
 
 #logging.disable(logging.INFO)
@@ -30,7 +31,7 @@ def Listbox_click(event):
 			Listbox_insert_contentList(clickedContentObject.contentList, lbxLine)
 	
 	elif clickedContentObject.dirEntry.is_file():
-		tki.Listbox_display_file_content(clickedContentObject)
+		display_file_content(clickedContentObject)
 
 def do_pop_menu(event):
 	try:
@@ -136,6 +137,11 @@ def add_folder(event):
 
 	except Exception as exception:
 		logging.error('LBX - Add %s item to lbx FAILED:\n %s'%(fileName, exception))
+
+def display_file_content(fileClicked):
+	tkt.Displayed = fileClicked.name
+	Text.delete(0.0,index2=tk.END)
+	Text.insert("insert",fileClicked.content)
 
 def is_open_in_Listbox(folder):
 	logging.info('LBX - is_open_in_Listbox({})'.format(folder.name))
